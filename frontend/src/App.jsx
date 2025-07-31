@@ -1,44 +1,46 @@
 import './App.css';
 import { useState, useEffect } from 'react';  // Importing useState for managing state in the component
+import Navigation from './components/Navigation';
+import HomePage from './pages/HomePage';
+import OfficersPage from './pages/OfficersPage';
+import IncidentsPage from './pages/IncidentsPage';
+import VehiclesPage from './pages/VehiclesPage';
+import FirearmsPage from './pages/FirearmsPage';
+import CreateOrEditOfficerPage from './pages/CreateOrEditOfficerPage';
+import IncidentViewPage from './pages/IncidentViewPage';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Define the backend port and URL for API requests
 const backendPort = 4253;  // Use the port you assigned to the backend server, this would normally go in .env file
-const backendURL = `http://classwork.engr.oregonstate.edu:${backendPort}/`;
+const backendURL = `http://classwork.engr.oregonstate.edu:${backendPort}`;
 
 function App() {
-
-    // Set up a state variable `message` to store and display the backend response
-    const [message, setMessage] = useState([]);
-
-    // Get the data from the database
-    const getData = async function () {
-        if (message.length > 0) return; // Skip if data is already fetched
-        try {
-            // Make a GET request to the backend
-            const response = await fetch(backendURL);
-            
-            // Convert the response into JSON format
-            const rows = await response.json();
-            
-            // Update the message state with the response data
-            setMessage(JSON.stringify(rows));
-            
-        } catch (error) {
-          // If the API call fails, print the error to the console
-          console.log(error);
-        }
-    };
-
-    // Load table on page load
-    useEffect(() => {
-        getData();
-    }, []);
+  const [officerToEdit, setOfficerToEdit] = useState();
+  const [incidentToView, setIncidentToView] = useState();
 
   return (
-    <>
-          <h1>MySQL Results:</h1>
-          <p>{message}</p>
-    </>
+    <div className='app'>
+      <header>
+        <h1>LETS</h1>
+        <p>Law Enforcement Tracking System</p>
+      </header>
+      <Router>
+        <Navigation/>
+        <Routes>
+          <Route path='/' element={<HomePage />}></Route>
+          <Route path='/officers' element={<OfficersPage backendURL={backendURL} setOfficerToEdit={setOfficerToEdit}/>}></Route>
+          <Route path='/incidents' element={<IncidentsPage backendURL={backendURL} setIncidentToView={setIncidentToView}/>}></Route>
+          <Route path='/vehicles' element={<VehiclesPage backendURL={backendURL}/>}></Route>
+          <Route path='/firearms' element={<FirearmsPage backendURL={backendURL}/>}></Route>
+          <Route path='/create-officers' element={<CreateOrEditOfficerPage mode={'create'} title={'Add Officer'}/>}></Route>
+          <Route path='/edit-officers' element={<CreateOrEditOfficerPage mode={'edit'} title={'Edit Officer'} officerToEdit={officerToEdit}/>}></Route>
+          <Route path='/view-incident' element={<IncidentViewPage backendURL={backendURL} incidentToView={incidentToView}/>}></Route>
+        </Routes>
+      </Router>
+      <footer>
+        <p>&copy; 2025 Andrew Heilesen and Brice Jenkins</p>
+      </footer>  
+    </div>
   );
 
 } export default App;

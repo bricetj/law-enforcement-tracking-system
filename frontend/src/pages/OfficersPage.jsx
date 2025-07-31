@@ -1,0 +1,42 @@
+import { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import Table from '../components/Table';
+
+function OfficersPage( {backendURL, setOfficerToEdit} ) {
+    const [officers, setOfficers] = useState([]);
+    const navigate = useNavigate();
+
+    // Calls the 'GET /officers' endpoint in the REST API.
+    const loadOfficers = async () => {
+        if (officers.length > 0) return; // Skip data if already fetched
+        try {
+            const response = await fetch(backendURL + '/officers');
+            const data = await response.json();
+            setOfficers(data);
+        } catch (error) {
+            console.log (error)
+        }
+    };
+    // Cannot pass an async function to useEffect; however, the anonymous
+    // function passed can call loadOfficers().
+    useEffect( () => {
+        loadOfficers();
+    }, []);
+
+    // Will be used to capture a particular officer row to pre-populate
+    // editing form on CreateOrEditOfficerPage and redirect to that page.
+    const onEdit = (officer) => {
+        setOfficerToEdit(officer)
+        navigate('/edit-officers')
+    }
+
+    return (
+        <>
+            <h2>Officers</h2>
+            <Link to='/create-officers'><button className='add-button'>Add Officer</button></Link>
+            <Table tableData={officers} onEdit={onEdit}></Table>
+        </>
+    );
+}
+
+export default OfficersPage;

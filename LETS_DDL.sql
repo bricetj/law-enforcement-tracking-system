@@ -7,7 +7,7 @@
     Class/Section:  CS340 Introduction to Databases
     Assignment:     Project Step 2 - DDL
     Date Created:   July 22, 2025
-    Last Modified:  July 24, 2025
+    Last Modified:  July 30, 2025
 
 ******************************************************************************/
 
@@ -75,23 +75,22 @@ CREATE OR REPLACE TABLE Vehicles (
     vehicleID VARCHAR(50) UNIQUE NOT NULL,
     year INT NOT NULL,
     vehicleModelID INT NOT NULL,
-    vehicleColorID INT NOT NULL,
+    color ENUM('Black','Blue','Brown','Gold','Green','Gray','Orange','Purple','Red','Silver','White','Yellow') NOT NULL,
     licensePlate VARCHAR(50) UNIQUE,
     isActive TINYINT(1) DEFAULT 1 NOT NULL,
     PRIMARY KEY (vehicleID),
-    FOREIGN KEY (vehicleModelID) REFERENCES VehicleModels (vehicleModelID),
-    FOREIGN KEY (vehicleColorID) REFERENCES VehicleColors (vehicleColorID)
+    FOREIGN KEY (vehicleModelID) REFERENCES VehicleModels (vehicleModelID)
 );
 
-INSERT INTO Vehicles (vehicleID, year, vehicleModelID, vehicleColorID, licensePlate, isActive)
-VALUES ('1HGBH41JXMN109186', 2018, 4, 6, 'RFD9956', 1),
-       ('1RHBJ61JRLN180456', 2018, 4, 6, 'RFD4567', 1),
-       ('1YRDF53NMBV843521', 2022, 3, 1, 'HHH9989', 1),
-       ('2VCBM22MION734889', 2021, 5, 1, 'VBV4324', 1),
-       ('1QWRT09BMNR034298', 2011, 7, 11, 'CED7656', 0),
-       ('3UNNL67JXNN081123', 2016, 6, 11, 'BBM8211', 1),
-       ('6GGDF13PIPJ089956', 2020, 8, 11, 'RRF8908', 1),
-       ('1RRQR54JIOM413412', 2018, 4, 2, 'RLL1231', 1);
+INSERT INTO Vehicles (vehicleID, year, vehicleModelID, color, licensePlate, isActive)
+VALUES ('1HGBH41JXMN109186', 2018, 4, 'Gray', 'RFD9956', 1),
+       ('1RHBJ61JRLN180456', 2018, 4, 'Gray', 'RFD4567', 1),
+       ('1YRDF53NMBV843521', 2022, 3, 'Black', 'HHH9989', 1),
+       ('2VCBM22MION734889', 2021, 5, 'Black', 'VBV4324', 1),
+       ('1QWRT09BMNR034298', 2011, 7, 'White', 'CED7656', 0),
+       ('3UNNL67JXNN081123', 2016, 6, 'White', 'BBM8211', 1),
+       ('6GGDF13PIPJ089956', 2020, 8, 'White', 'RRF8908', 1),
+       ('1RRQR54JIOM413412', 2018, 4, 'White', 'RLL1231', 1);
 
 /*
 Creates the Officers table and inserts sample data. Enforces M:1 relationship
@@ -219,13 +218,14 @@ Incidents.
 CREATE OR REPLACE TABLE OfficerIncidents (
     officerID INT NOT NULL,
     incidentID INT NOT NULL,
+    isCaseOfficer TINYINT(1) NOT NULL,
     PRIMARY KEY (officerID, incidentID),
     FOREIGN KEY (officerID) REFERENCES Officers (officerID) ON DELETE CASCADE,
     FOREIGN KEY (incidentID) REFERENCES Incidents (incidentID) ON DELETE CASCADE
 );
 
-INSERT INTO OfficerIncidents (officerID, incidentID)
-VALUES (1, 1),(4, 2),(3, 2),(2, 3),(5, 4);
+INSERT INTO OfficerIncidents (officerID, incidentID, isCaseOfficer)
+VALUES (1, 1, 1),(4, 2, 1),(3, 2, 0),(2, 3, 1),(5, 4, 1);
 
 SET FOREIGN_KEY_CHECKS = 1;
 COMMIT;

@@ -1,5 +1,5 @@
 // Imports database module for database connection.
-const db = require('./db-connector');
+const db = require('./database/db-connector');
 
 const MY_ONID = "jenkibri";
 
@@ -23,24 +23,104 @@ app.use(cors({ credentials: true, origin: "*" }));
 app.use(express.json()); // this is needed for post requests, good thing to know
             
 // Route handler 
-app.get('/', async (req, res) => {
+app.get('/officers', async (req, res) => {
     try {
         // Define queries
-        const query1 = 'DROP TABLE IF EXISTS diagnostic;';
-        const query2 = 'CREATE TABLE diagnostic(id INT PRIMARY KEY AUTO_INCREMENT, text VARCHAR(255) NOT NULL);';
-        const query3 = `INSERT INTO diagnostic (text) VALUES ("MySQL and React is working for ${MY_ONID}!")`;
-        const query4 = 'SELECT * FROM diagnostic;';
-
-        // Execute the queries
-        await db.query(query1);
-        await db.query(query2);
-        await db.query(query3);
-
-        // Get the results
-        const [rows] = await db.query(query4);
+        const query1 = `SELECT officerID AS 'Badge No.', firstName AS 'First Name', middleName AS 'Middle Name',\
+                        lastName AS 'Last Name', ssn AS SSN, DATE_FORMAT(dob, '%Y-%m-%d') AS 'Date of Birth',\
+                        address AS Address, email AS Email, IF(isActive = 1, 'Active', 'Inactive') AS 'Active Status' \
+                        FROM Officers ORDER BY officerID ASC;`;
+        
+        const [officers] = await db.query(query1);
 
         // Send back the results in JSON
-        res.status(200).json(rows)
+        res.status(200).json(officers)
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+app.get('/incidents/:id', async (req, res) => {
+    const incidentID = req.params.id;
+    try {
+        // Define queries
+        const query1 = `SELECT Incidents.incidentID AS 'ID', DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS 'Date',\
+                        Incidents.description AS 'Narrative', Officers.firstName AS 'First Name', Officers.lastName\
+                        AS 'Last Name' FROM Incidents JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID\
+                        JOIN Officers ON Officers.officerID = OfficerIncidents.officerID WHERE Incidents.incidentID = 1\
+                        AND OfficerIncidents.isCaseOfficer = ${incidentID};`;
+        
+        const [incidents] = await db.query(query1);
+
+        // Send back the results in JSON
+        res.status(200).json(incidents)
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+app.get('/incidents', async (req, res) => {
+    try {
+        // Define queries
+        const query1 = `SELECT Incidents.incidentID AS 'Incident Number', DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS 'Date',\
+                        Officers.lastName AS 'Case Officer' FROM Incidents JOIN OfficerIncidents ON \
+                        Incidents.incidentID = OfficerIncidents.incidentID JOIN Officers ON \
+                        Officers.officerID = OfficerIncidents.officerID WHERE OfficerIncidents.isCaseOfficer = 1\
+                        ORDER BY Incidents.incidentID ASC;`;
+        
+        const [incidents] = await db.query(query1);
+
+        // Send back the results in JSON
+        res.status(200).json(incidents)
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+app.get('/vehicles', async (req, res) => {
+    try {
+        // Define queries
+        const query1 = `SELECT Vehicles.vehicleID AS 'VIN', Vehicles.color AS 'Color', Vehicles.year AS 'Year',\
+                        VehicleMakes.make AS 'Make', VehicleModels.model AS 'Model', Vehicles.licensePlate as 'License Plate',\
+                        Officers.lastName AS 'Assigned Officer', IF(Vehicles.isActive = 1, 'Yes', 'No') AS 'Active Status' FROM\
+                        Vehicles JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID JOIN VehicleMakes\
+                        ON VehicleMakes.vehicleMakeID = VehicleModels.vehicleMakeID LEFT JOIN Officers ON Officers.vehicleID = \
+                        Vehicles.vehicleID ORDER BY Vehicles.vehicleID ASC;`;
+        
+        const [incidents] = await db.query(query1);
+
+        // Send back the results in JSON
+        res.status(200).json(incidents)
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+app.get('/firearms', async (req, res) => {
+    try {
+        // Define queries
+        const query1 = `SELECT Firearms.firearmID AS 'Serial Number', Firearms.year AS 'Year', FirearmMakes.make AS 'Make',\
+                        FirearmModels.model AS 'Model', Officers.lastName AS 'Assigned Officer', IF(Firearms.isActive = 1, 'Yes', 'No')\
+                        AS 'Active Status' FROM Firearms JOIN FirearmModels ON Firearms.firearmModelID = FirearmModels.firearmModelID\
+                        JOIN FirearmMakes ON FirearmMakes.firearmMakeID = FirearmModels.firearmMakeID LEFT JOIN Officers ON Officers.officerID\
+                        = Firearms.officerID ORDER BY Firearms.firearmID ASC;`;
+        
+        const [incidents] = await db.query(query1);
+
+        // Send back the results in JSON
+        res.status(200).json(incidents)
 
     } catch (error) {
         console.error("Error executing queries:", error);
