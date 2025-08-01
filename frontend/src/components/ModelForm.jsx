@@ -31,14 +31,15 @@ function ModelForm ({mode, modelToEdit}) {
     return (
         <div className='model-form'>
             <label>Make:&nbsp;
-                <input
+                <select
                     type='text'
-                    readOnly
                     name='Make'
                     required='required'
-                    placeholder='Enter Make here'
                     value={modelData['Make'] || ''}
-                    onChange={onChangeHandler} />
+                    onChange={onChangeHandler}>
+                        <option value='' disabled>Select Make</option>
+                        <option value={modelData['Make'] || ''}>{modelData['Make'] || ''}</option>
+                </select>
             </label>
             &nbsp;&nbsp;
             <label>Model:&nbsp;

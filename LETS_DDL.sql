@@ -184,7 +184,7 @@ OfficerIncidents.
 CREATE OR REPLACE TABLE Incidents (
     incidentID INT AUTO_INCREMENT UNIQUE NOT NULL,
     date DATE NOT NULL,
-    description VARCHAR(1000),
+    description TEXT,
     isActive TINYINT(1) DEFAULT 1 NOT NULL,
     PRIMARY KEY (incidentID)
 );
