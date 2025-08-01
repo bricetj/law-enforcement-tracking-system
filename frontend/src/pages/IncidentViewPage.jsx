@@ -36,11 +36,6 @@ function IncidentViewPage( {pageTitle, mode, backendURL, incidentToView} ) {
         loadIncident();
     }, []);
 
-    // Changes the value of the title.
-    useEffect( () => {
-        document.title = title;
-    }, [title])
-
     // Initiated when Edit Incident button is pressed.
     const changeTitleHandler = () => {
         setTitle('Edit Incident')
