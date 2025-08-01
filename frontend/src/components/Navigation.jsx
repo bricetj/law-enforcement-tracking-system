@@ -13,6 +13,7 @@ function Navigation() {
             <Link to='/incidents'>Incidents</Link>
             <Link to='/vehicles'>Vehicles</Link>
             <Link to='/firearms'>Firearms</Link>
+            <Link to='/admin'>Admin</Link>
         </nav>
     );
 }

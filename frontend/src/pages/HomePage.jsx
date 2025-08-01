@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
+/**
+ * React page component that creates a simple homepage for the app.
+ */
 function HomePage() {
     return (
         <>

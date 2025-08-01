@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Table from '../components/Table.jsx';
 
-function VehiclesPage( {backendURL} ) {
+/**
+ * A React page component to display a table of Vehicles.
+ * @param {string} backendURL The URL used to host the application.
+ * Is needed to initiate get requests.
+ * @param {function} setVehicleToEdit Function that is passed
+ * down to change value of vehicleToEdit variable when editing icon
+ * is selected.
+ */
+function VehiclesPage( {backendURL, setVehicleToEdit} ) {
     const [vehicles, setVehicles] = useState([]);
+    const navigate = useNavigate();
 
     // Calls the 'GET /vehicles' endpoint in the REST API.
     const loadVehicles = async () => {
@@ -16,17 +25,25 @@ function VehiclesPage( {backendURL} ) {
             console.log (error)
         }
     };
+
     // Cannot pass an async function to useEffect; however, the anonymous
     // function passed can call loadVehicles().
     useEffect( () => {
         loadVehicles();
     }, []);
 
+    // Will be used to capture a particular vehicle row to pre-populate
+    // editing form on CreateOrEditVehiclePage and redirect to that page.
+    const onEdit = (vehicle) => {
+        setVehicleToEdit(vehicle)
+        navigate('/edit-vehicle')
+    }
+
     return (
         <>
             <h2>Vehicles</h2>
-            <button className='add-button'>Add Vehicle</button>
-            <Table tableData={vehicles}></Table>
+            <Link to='/create-vehicle'><button className='add-button'>Add Vehicle</button></Link>
+            <Table tableData={vehicles} onEdit={onEdit}></Table>
         </>
     );
 }

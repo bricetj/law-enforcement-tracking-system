@@ -1,5 +1,15 @@
 import { MdCreate, MdDelete, MdOutlinePageview } from 'react-icons/md';
 
+/**
+ * Creates a HTML table row to display each object from the database.
+ * Generally displays an edit icon and a delete icon for each row. If data
+ * if from Incidents, the edit icon is replaced by a view icon.
+ * @param {boolean} isIncidents Determines if a table is for Incidents or not.
+ * @param {object} rowObject An object of data representing a row.
+ * @param {function} onEdit A function that sets a variable with data to be
+ * edited and initiates editing procedures.
+ * @returns A React element that renders an HTML table row.
+ */
 const TableRow = ({ isIncidents, rowObject, onEdit, onView }) => {
     return (
         <tr>

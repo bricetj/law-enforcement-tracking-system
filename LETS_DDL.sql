@@ -7,27 +7,12 @@
     Class/Section:  CS340 Introduction to Databases
     Assignment:     Project Step 2 - DDL
     Date Created:   July 22, 2025
-    Last Modified:  July 30, 2025
+    Last Modified:  July 31, 2025
 
 ******************************************************************************/
 
 SET FOREIGN_KEY_CHECKS = 0;
 SET AUTOCOMMIT = 0;
-
-/*
-Creates the VehicleColors table and inserts sample data. Has a 1:M relationship
-with Vehicles that is implemented with vehicleColorID as a FK inside of
-Vehicles.
-*/
-CREATE OR REPLACE TABLE VehicleColors (
-    vehicleColorID INT AUTO_INCREMENT UNIQUE NOT NULL,
-    color VARCHAR(50) UNIQUE,
-    PRIMARY KEY (vehicleColorID)
-);
-
-INSERT INTO VehicleColors (color)
-VALUES ('Black'),('Blue'),('Brown'),('Gold'),('Green'),('Gray'),('Orange'),
-       ('Purple'),('Red'),('Silver'),('White'),('Yellow');
 
 /*
 Creates the VehicleMakes table and inserts sample data. Has a 1:M relationship

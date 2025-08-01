@@ -2,6 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Table from '../components/Table';
 
+/**
+ * A React page component to display a table of Officers.
+ * @param {string} backendURL The URL used to host the application.
+ * Is needed to initiate get requests.
+ * @param {function} setOfficerToEdit Function that is passed
+ * down to change value of officerToEdit variable when editing icon
+ * is selected.
+ */
 function OfficersPage( {backendURL, setOfficerToEdit} ) {
     const [officers, setOfficers] = useState([]);
     const navigate = useNavigate();
@@ -17,6 +25,7 @@ function OfficersPage( {backendURL, setOfficerToEdit} ) {
             console.log (error)
         }
     };
+    
     // Cannot pass an async function to useEffect; however, the anonymous
     // function passed can call loadOfficers().
     useEffect( () => {

@@ -157,3 +157,39 @@ button:focus-visible {
     left: 400px;
 }
 
+.incident-narrative {
+    width: 500px;
+    height: 200px;
+    resize: vertical;
+    vertical-align: top;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
+}
+
+.column {
+    float: left;
+    width: 50%;
+}
+
+.row:after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.make-form {
+    display: inline-block;
+    align-content: left;
+}
+
+.model-form {
+    display: inline-block;
+    align-content: left;
+}
+
+.make-model-add-button {
+    margin: 10px;
+    position: relative;
+}
+
