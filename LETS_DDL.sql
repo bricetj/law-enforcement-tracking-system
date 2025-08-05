@@ -7,9 +7,16 @@
     Class/Section:  CS340 Introduction to Databases
     Assignment:     Project Step 2 - DDL
     Date Created:   July 22, 2025
-    Last Modified:  July 31, 2025
+    Last Modified:  August 5, 2025
 
 ******************************************************************************/
+
+DROP PROCEDURE IF EXISTS sp_load_lets;
+DELIMITER //
+CREATE PROCEDURE sp_load_lets()
+BEGIN
+
+
 
 SET FOREIGN_KEY_CHECKS = 0;
 SET AUTOCOMMIT = 0;
@@ -34,7 +41,8 @@ with VehicleMakes by referencing vehicleMakeID as a FK here. Table also has a 1:
 relationship with Vehicles which is implemented with vehicleModelID as a FK inside
 of Vehicles.
 */
-CREATE OR REPLACE TABLE VehicleModels (
+DROP TABLE IF EXISTS VehicleModels;
+CREATE TABLE VehicleModels (
     vehicleModelID INT AUTO_INCREMENT UNIQUE NOT NULL,
     model VARCHAR(50),
     vehicleMakeID INT NOT NULL,
@@ -214,3 +222,8 @@ VALUES (1, 1, 1),(4, 2, 1),(3, 2, 0),(2, 3, 1),(5, 4, 1);
 
 SET FOREIGN_KEY_CHECKS = 1;
 COMMIT;
+
+
+
+END //
+DELIMITER ;
