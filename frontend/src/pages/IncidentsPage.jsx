@@ -40,11 +40,21 @@ function IncidentsPage( {backendURL, setIncidentToView} ) {
         navigate('/view-incident')
     }
 
+    // Calls the Delete route handler.
+    const onDelete = async (id) => {
+        const response = await fetch(backendURL + `/incidents/${id}`, { method: 'DELETE' });
+        if (response.status === 204) {
+            setIncidents(incidents.filter( e => e['ID'] !== id))
+        } else {
+            alert(`Failed to delete incident with id = ${id}, status code = ${response.status}`)
+        }
+    }
+
     return (
         <>
             <h2>Incidents</h2>
             <Link to='/create-incident'><button className='add-button'>Add Incident</button></Link>
-            <Table tableData={incidents} onView={onView} isIncidents={true}></Table>
+            <Table tableData={incidents} onView={onView} isIncidents={true} onDelete={onDelete}></Table>
         </>
     );
 }

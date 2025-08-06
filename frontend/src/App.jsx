@@ -37,7 +37,7 @@ function App() {
         <Navigation/>
         <Routes>
           <Route path='/' element={<HomePage />}></Route>
-          <Route path='/admin' element={<AdminPage />}></Route>
+          <Route path='/admin' element={<AdminPage backendURL={backendURL}/>}></Route>
           <Route path='/officers' element={<OfficersPage backendURL={backendURL} setOfficerToEdit={setOfficerToEdit}/>}></Route>
           <Route path='/incidents' element={<IncidentsPage backendURL={backendURL} setIncidentToView={setIncidentToView}/>}></Route>
           <Route path='/vehicles' element={<VehiclesPage backendURL={backendURL} setVehicleToEdit={setVehicleToEdit}/>}></Route>

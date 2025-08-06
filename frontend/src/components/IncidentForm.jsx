@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Table from '../components/Table';
 
 /**
@@ -8,7 +9,7 @@ import Table from '../components/Table';
  * @param {object} incidentData An Incidents object.
  * @returns An HTML form with various inputs for Incidents data.
  */
-function IncidentForm ({mode, incidentData}) {
+function IncidentForm ({mode, incidentData, editButtonHandler}) {
     const [incident, setIncidentData] = useState({});
 
     // For use in restricting editing when in 'view' mode.
@@ -44,12 +45,13 @@ function IncidentForm ({mode, incidentData}) {
                             type='number'
                             readOnly
                             required='required'
-                            value={incident['Incident Number'] || ''}/>
+                            value={incident['ID'] || ''}/>
                     </label>
                 }
                 &nbsp;&nbsp;
                 <label>Date:&nbsp;
                     <input
+                        className='date-picker'
                         type='date'
                         name='Date'
                         readOnly = {isReadOnly}
@@ -98,7 +100,12 @@ function IncidentForm ({mode, incidentData}) {
                 <br/>
                 <br/>
                 <div className='update-button'>
-                    {mode != 'view' && <button>Save</button>}
+                    {mode != 'view' &&
+                    <button 
+                        onClick = {e => {
+                            e.preventDefault();
+                            editButtonHandler()}}>Save
+                    </button>}
                 </div>
             </fieldset>
         </div>

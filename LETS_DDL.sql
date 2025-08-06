@@ -7,7 +7,7 @@
     Class/Section:  CS340 Introduction to Databases
     Assignment:     Project Step 2 - DDL
     Date Created:   July 22, 2025
-    Last Modified:  August 5, 2025
+    Last Modified:  August 6, 2025
 
 ******************************************************************************/
 
@@ -47,7 +47,7 @@ CREATE TABLE VehicleModels (
     model VARCHAR(50),
     vehicleMakeID INT NOT NULL,
     PRIMARY KEY (vehicleModelID),
-    FOREIGN KEY (vehicleMakeID) REFERENCES VehicleMakes (vehicleMakeID),
+    FOREIGN KEY (vehicleMakeID) REFERENCES VehicleMakes (vehicleMakeID) ON DELETE CASCADE,
     CONSTRAINT makeModel UNIQUE (model, vehicleMakeID)
 );
 
@@ -72,7 +72,7 @@ CREATE OR REPLACE TABLE Vehicles (
     licensePlate VARCHAR(50) UNIQUE,
     isActive TINYINT(1) DEFAULT 1 NOT NULL,
     PRIMARY KEY (vehicleID),
-    FOREIGN KEY (vehicleModelID) REFERENCES VehicleModels (vehicleModelID)
+    FOREIGN KEY (vehicleModelID) REFERENCES VehicleModels (vehicleModelID) ON DELETE RESTRICT
 );
 
 INSERT INTO Vehicles (vehicleID, year, vehicleModelID, color, licensePlate, isActive)
@@ -142,7 +142,7 @@ CREATE OR REPLACE TABLE FirearmModels (
     caliber VARCHAR(50),
     type VARCHAR(50),
     PRIMARY KEY (firearmModelID),
-    FOREIGN KEY (firearmMakeID) REFERENCES FirearmMakes (firearmMakeID),
+    FOREIGN KEY (firearmMakeID) REFERENCES FirearmMakes (firearmMakeID) ON DELETE CASCADE,
     CONSTRAINT makeModel UNIQUE (model, firearmMakeID)
 );
 
@@ -166,7 +166,7 @@ CREATE OR REPLACE TABLE Firearms (
     isActive TINYINT(1) DEFAULT 1 NOT NULL,
     officerID INT,
     PRIMARY KEY (firearmID),
-    FOREIGN KEY (firearmModelID) REFERENCES FirearmModels (firearmModelID),
+    FOREIGN KEY (firearmModelID) REFERENCES FirearmModels (firearmModelID) ON DELETE RESTRICT,
     FOREIGN KEY (officerID) REFERENCES Officers (officerID) ON DELETE SET NULL
 );
 

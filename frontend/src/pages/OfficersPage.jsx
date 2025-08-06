@@ -39,11 +39,21 @@ function OfficersPage( {backendURL, setOfficerToEdit} ) {
         navigate('/edit-officers')
     }
 
+    // Calls the Delete route handler.
+    const onDelete = async (id) => {
+        const response = await fetch(backendURL + `/officers/${id}`, { method: 'DELETE' });
+        if (response.status === 204) {
+            setOfficers(officers.filter( e => e['ID'] !== id))
+        } else {
+            alert(`Failed to delete officer with id = ${id}, status code = ${response.status}`)
+        }
+    }
+
     return (
         <>
             <h2>Officers</h2>
             <Link to='/create-officers'><button className='add-button'>Add Officer</button></Link>
-            <Table tableData={officers} onEdit={onEdit}></Table>
+            <Table tableData={officers} onEdit={onEdit} onDelete={onDelete}></Table>
         </>
     );
 }

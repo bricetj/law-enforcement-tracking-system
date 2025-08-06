@@ -10,7 +10,7 @@ import TableRow from './TableRow';
  * edited and initiates editing procedures.
  * @returns A React element that renders an HTML table.
  */
-function Table( {isIncidents, tableData, onEdit, onView} ) {
+function Table( {isIncidents, tableData, onEdit, onView, onDelete } ) {
     // If array is empty.
     if (!tableData || tableData.length === 0) {
         return <p>No data to display.</p>
@@ -30,7 +30,13 @@ function Table( {isIncidents, tableData, onEdit, onView} ) {
 
                 <tbody>
                     {tableData.map((row, index) => (
-                        <TableRow key={index} isIncidents={isIncidents} rowObject={row} onEdit={onEdit} onView={onView}/>
+                        <TableRow
+                            key={index}
+                            isIncidents={isIncidents}
+                            rowObject={row}
+                            onEdit={onEdit}
+                            onView={onView}
+                            onDelete={onDelete}/>
                     ))}
                 </tbody>
         </table>

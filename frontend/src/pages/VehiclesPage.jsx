@@ -39,11 +39,21 @@ function VehiclesPage( {backendURL, setVehicleToEdit} ) {
         navigate('/edit-vehicle')
     }
 
+    // Calls the Delete route handler.
+    const onDelete = async (id) => {
+        const response = await fetch(backendURL + `/vehicles/${id}`, { method: 'DELETE' });
+        if (response.status === 204) {
+            setVehicles(vehicles.filter( e => e['ID'] !== id))
+        } else {
+            alert(`Failed to delete vehicle with id = ${id}, status code = ${response.status}`)
+        }
+    }
+
     return (
         <>
             <h2>Vehicles</h2>
             <Link to='/create-vehicle'><button className='add-button'>Add Vehicle</button></Link>
-            <Table tableData={vehicles} onEdit={onEdit}></Table>
+            <Table tableData={vehicles} onEdit={onEdit} onDelete={onDelete}></Table>
         </>
     );
 }

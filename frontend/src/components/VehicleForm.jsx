@@ -37,7 +37,7 @@ function VehicleForm ({mode, vehicleToEdit}) {
                         name='VIN'
                         required='required'
                         placeholder='Enter VIN here'
-                        value={vehicleData['VIN'] || ''}
+                        value={vehicleData['ID'] || ''}
                         onChange={onChangeHandler} />
                 </label>
                 &nbsp;&nbsp;

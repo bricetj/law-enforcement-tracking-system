@@ -74,6 +74,7 @@ function OfficerForm ({mode, officerToEdit}) {
                 <label>Date of Birth:&nbsp;
                     <input
                         type='date'
+                        className='date-picker'
                         name='Date of Birth'
                         required='required'
                         value={officerData['Date of Birth'] || ''}

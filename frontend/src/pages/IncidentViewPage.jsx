@@ -16,13 +16,15 @@ import IncidentForm from '../components/IncidentForm.jsx';
 function IncidentViewPage( {pageTitle, mode, backendURL, incidentToView} ) {
     const [incident, setIncident] = useState({});
     const [title, setTitle] = useState(pageTitle);
+    const [isVisible, setIsVisible] = useState(true);
+    const navigate = useNavigate();
 
     // Calls the 'GET /incidents/:id' endpoint in the REST API.
     const loadIncident = async () => {
         // Skips data if already fetched.
         if (incident.length > 0) return;
         try {
-            const response = await fetch(backendURL + `/incidents/${incidentToView['Incident Number']}`);
+            const response = await fetch(backendURL + `/incidents/${incidentToView['ID']}`);
             const data = await response.json();
             setIncident(data);
         } catch (error) {
@@ -37,15 +39,23 @@ function IncidentViewPage( {pageTitle, mode, backendURL, incidentToView} ) {
     }, []);
 
     // Initiated when Edit Incident button is pressed.
-    const changeTitleHandler = () => {
+    const editTitleHandler = (title) => {
         setTitle('Edit Incident')
+        setIsVisible(false)
+    }
+
+    // Sets the page back to View and makes the edit button reappear.
+    const editButtonHandler = () => {
+        setIsVisible(true)
+        setTitle('View Incident')
+        navigate('/view-incident')
     }
 
     return (
         <>
             <h2>{title}</h2>
-            <Link to='/edit-incident'>{mode!=='create' && <button onClick={changeTitleHandler} className='add-button'>Edit Incident</button>}</Link>
-            <IncidentForm mode={mode} incidentData={incident[0]}></IncidentForm>
+            <Link to='/edit-incident'>{mode !=='create' && isVisible && <button onClick={editTitleHandler} className='add-button'>Edit Incident</button>}</Link>
+            <IncidentForm mode={mode} incidentData={incident[0]} editButtonHandler={editButtonHandler}></IncidentForm>
         </>
     );
 }

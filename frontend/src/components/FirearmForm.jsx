@@ -37,7 +37,7 @@ function FirearmForm ({mode, firearmToEdit}) {
                         name='Serial Number'
                         required='required'
                         placeholder='Enter Serial Number here'
-                        value={firearmData['Serial Number'] || ''}
+                        value={firearmData['ID'] || ''}
                         onChange={onChangeHandler} />
                 </label>
                 &nbsp;&nbsp;

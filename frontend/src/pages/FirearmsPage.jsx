@@ -39,11 +39,21 @@ function FirearmsPage( {backendURL, setFirearmToEdit} ) {
         navigate('/edit-firearm')
     }
 
+    // Calls the Delete route handler.
+    const onDelete = async (id) => {
+        const response = await fetch(backendURL + `/firearms/${id}`, { method: 'DELETE' });
+        if (response.status === 204) {
+            setFirearms(firearms.filter( e => e['ID'] !== id))
+        } else {
+            alert(`Failed to delete firearm with id = ${id}, status code = ${response.status}`)
+        }
+    }
+
     return (
         <>
             <h2>Firearms</h2>
             <Link to='/create-firearm'><button className='add-button'>Add Firearm</button></Link>
-            <Table tableData={firearms} onEdit={onEdit}></Table>
+            <Table tableData={firearms} onEdit={onEdit} onDelete={onDelete}></Table>
         </>
     );
 }

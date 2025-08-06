@@ -21,12 +21,13 @@ const PORT = 4253;
 // EX (FLIP/classwork) http://classwork.engr.oregonstate.edu:5173
 app.use(cors({ credentials: true, origin: "*" }));
 app.use(express.json()); // this is needed for post requests, good thing to know
-            
+
+
 // Route handler 
 app.get('/officers', async (req, res) => {
     try {
         // Define queries
-        const query1 = `SELECT officerID AS 'Badge No.', firstName AS 'First Name', middleName AS 'Middle Name',\
+        const query1 = `SELECT officerID AS 'ID', firstName AS 'First Name', middleName AS 'Middle Name',\
                         lastName AS 'Last Name', ssn AS SSN, DATE_FORMAT(dob, '%Y-%m-%d') AS 'Date of Birth',\
                         address AS Address, email AS Email, IF(isActive = 1, 'Active', 'Inactive') AS 'Active Status' \
                         FROM Officers ORDER BY officerID ASC;`;
@@ -47,7 +48,7 @@ app.get('/incidents/:id', async (req, res) => {
     const incidentID = req.params.id;
     try {
         // Define queries
-        const query1 = `SELECT Incidents.incidentID AS 'Incident Number', DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS 'Date',\
+        const query1 = `SELECT Incidents.incidentID AS 'ID', DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS 'Date',\
                         Incidents.description AS 'Narrative', Officers.lastName\
                         AS 'Last Name', IF(Incidents.isActive = 1, 'Active', 'Inactive') AS 'Case Status' FROM Incidents\
                         JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID\
@@ -73,7 +74,7 @@ app.get('/incidents/:id', async (req, res) => {
 app.get('/incidents', async (req, res) => {
     try {
         // Define queries
-        const query1 = `SELECT Incidents.incidentID AS 'Incident Number', DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS 'Date',\
+        const query1 = `SELECT Incidents.incidentID AS 'ID', DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS 'Date',\
                         Officers.lastName AS 'Case Officer', IF(Incidents.isActive = 1, 'Active', 'Inactive') AS 'Case Status'\
                         FROM Incidents JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID JOIN Officers ON \
                         Officers.officerID = OfficerIncidents.officerID WHERE OfficerIncidents.isCaseOfficer = 1\
@@ -94,7 +95,7 @@ app.get('/incidents', async (req, res) => {
 app.get('/vehicles', async (req, res) => {
     try {
         // Define queries
-        const query1 = `SELECT Vehicles.vehicleID AS 'VIN', Vehicles.color AS 'Color', Vehicles.year AS 'Year',\
+        const query1 = `SELECT Vehicles.vehicleID AS 'ID', Vehicles.color AS 'Color', Vehicles.year AS 'Year',\
                         VehicleMakes.make AS 'Make', VehicleModels.model AS 'Model', Vehicles.licensePlate as 'License Plate',\
                         Officers.lastName AS 'Assigned Officer', IF(Vehicles.isActive = 1, 'Active', 'Inactive') AS 'Active Status' FROM\
                         Vehicles JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID JOIN VehicleMakes\
@@ -116,7 +117,7 @@ app.get('/vehicles', async (req, res) => {
 app.get('/firearms', async (req, res) => {
     try {
         // Define queries
-        const query1 = `SELECT Firearms.firearmID AS 'Serial Number', Firearms.year AS 'Year', FirearmMakes.make AS 'Make',\
+        const query1 = `SELECT Firearms.firearmID AS 'ID', Firearms.year AS 'Year', FirearmMakes.make AS 'Make',\
                         FirearmModels.model AS 'Model', Officers.lastName AS 'Assigned Officer', IF(Firearms.isActive = 1, 'Active', 'Inactive')\
                         AS 'Active Status' FROM Firearms JOIN FirearmModels ON Firearms.firearmModelID = FirearmModels.firearmModelID\
                         JOIN FirearmMakes ON FirearmMakes.firearmMakeID = FirearmModels.firearmMakeID LEFT JOIN Officers ON Officers.officerID\
@@ -137,7 +138,7 @@ app.get('/firearms', async (req, res) => {
 app.get('/vehicle-makes', async (req, res) => {
     try {
         // Define queries
-        const query1 = `SELECT vehicleMakeID AS 'Make ID', make AS 'Make' FROM VehicleMakes;`;
+        const query1 = `SELECT vehicleMakeID AS 'ID', make AS 'Make' FROM VehicleMakes;`;
         
         const [vehicleMakes] = await db.query(query1);
 
@@ -154,7 +155,7 @@ app.get('/vehicle-makes', async (req, res) => {
 app.get('/vehicle-models', async (req, res) => {
     try {
         // Define queries
-        const query1 = `SELECT VehicleModels.vehicleModelID AS 'Model ID', VehicleMakes.make AS 'Make',\
+        const query1 = `SELECT VehicleModels.vehicleModelID AS 'ID', VehicleMakes.make AS 'Make',\
                         VehicleModels.model AS 'Model' FROM VehicleModels JOIN VehicleMakes ON VehicleModels.vehicleMakeID =\
                         VehicleMakes.vehicleMakeID;`;
         
@@ -173,7 +174,7 @@ app.get('/vehicle-models', async (req, res) => {
 app.get('/firearm-makes', async (req, res) => {
     try {
         // Define queries
-        const query1 = `SELECT firearmMakeID AS 'Make ID', make AS 'Make' FROM FirearmMakes;`;
+        const query1 = `SELECT firearmMakeID AS 'ID', make AS 'Make' FROM FirearmMakes;`;
         
         const [firearmMakes] = await db.query(query1);
 
@@ -190,7 +191,7 @@ app.get('/firearm-makes', async (req, res) => {
 app.get('/firearm-models', async (req, res) => {
     try {
         // Define queries
-        const query1 = `SELECT FirearmModels.firearmModelID AS 'Model ID', FirearmMakes.make AS 'Make',\
+        const query1 = `SELECT FirearmModels.firearmModelID AS 'ID', FirearmMakes.make AS 'Make',\
                         FirearmModels.model AS 'Model' FROM FirearmModels JOIN FirearmMakes ON FirearmModels.firearmMakeID =\
                         FirearmMakes.firearmMakeID;`;
         
@@ -205,6 +206,133 @@ app.get('/firearm-models', async (req, res) => {
         res.status(500).send("An error occurred while executing the database queries.");
     }
 });
+
+
+app.delete('/officers/:id', async (req, res) => {
+    try {
+        const officerId = req.params.id;
+        const deleteQuery = `CALL sp_delete_officer(${officerId});`;
+        await db.query(deleteQuery);
+        res.status(204).send("Delete successful.");
+    } catch (error) {
+        console.error("Error executing PL/SQL:", error);
+            // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the PL/SQL.");
+    }
+});
+
+app.delete('/incidents/:id', async (req, res) => {
+    try {
+        const incidentId = req.params.id;
+        const deleteQuery = `CALL sp_delete_incident(${incidentId});`;
+        await db.query(deleteQuery);
+        res.status(204).send("Delete successful.");
+    } catch (error) {
+        console.error("Error executing PL/SQL:", error);
+            // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the PL/SQL.");
+    }
+});
+
+app.delete('/vehicles/:id', async (req, res) => {
+    try {
+        const vehicleId = req.params.id;
+        const deleteQuery = `CALL sp_delete_vehicle('${vehicleId}');`;
+        await db.query(deleteQuery);
+        res.status(204).send("Delete successful.");
+    } catch (error) {
+        console.error("Error executing PL/SQL:", error);
+            // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the PL/SQL.");
+    }
+});
+
+
+app.delete('/vehicle-makes/:id', async (req, res) => {
+    try {
+        const vehicleMakeId = req.params.id;
+        const deleteQuery = `CALL sp_delete_vehicle_make(${vehicleMakeId});`;
+        await db.query(deleteQuery);
+        res.status(204).send("Delete successful.");
+    } catch (error) {
+        console.error("Error executing PL/SQL:", error);
+            // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the PL/SQL.");
+    }
+});
+
+
+app.delete('/vehicle-models/:id', async (req, res) => {
+    try {
+        const vehicleModelId = req.params.id;
+        const deleteQuery = `CALL sp_delete_vehicle_model(${vehicleModelId});`;
+        await db.query(deleteQuery);
+        res.status(204).send("Delete successful.");
+    } catch (error) {
+        console.error("Error executing PL/SQL:", error);
+            // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the PL/SQL.");
+    }
+});
+
+
+app.delete('/firearms/:id', async (req, res) => {
+    try {
+        const firearmId = req.params.id;
+        const deleteQuery = `CALL sp_delete_firearm('${firearmId}');`;
+        await db.query(deleteQuery);
+        res.status(204).send("Delete successful.");
+    } catch (error) {
+        console.error("Error executing PL/SQL:", error);
+            // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the PL/SQL.");
+    }
+});
+
+
+app.delete('/firearm-makes/:id', async (req, res) => {
+    try {
+        const firearmMakeId = req.params.id;
+        const deleteQuery = `CALL sp_delete_firearm_make(${firearmMakeId});`;
+        await db.query(deleteQuery);
+        res.status(204).send("Delete successful.");
+    } catch (error) {
+        console.error("Error executing PL/SQL:", error);
+            // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the PL/SQL.");
+    }
+});
+
+
+
+app.delete('/firearm-models/:id', async (req, res) => {
+    try {
+        const firearmModelId = req.params.id;
+        const deleteQuery = `CALL sp_delete_firearm_model(${firearmModelId});`;
+        await db.query(deleteQuery);
+        res.status(204).send("Delete successful.");
+    } catch (error) {
+        console.error("Error executing PL/SQL:", error);
+            // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the PL/SQL.");
+    }
+});
+
+
+app.post('/reset-database', async (req, res) => {
+    try {
+        const resetSP = `CALL sp_load_lets();`;
+        const [reset] = await db.query(resetSP);
+        // Send back the results in JSON
+        res.status(201).json(reset)
+
+    } catch (error) {
+        console.error("Error executing stored procedure:", error);
+        // Send a generic error message to the browser
+        res.status(500).send("An error occurred while executing the database stored procedure.");
+    }
+});
+
 
 // Tell express what port to listen on 
 app.listen(PORT, function () {

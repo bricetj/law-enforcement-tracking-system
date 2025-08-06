@@ -38,12 +38,22 @@ function VehicleMakesPage({backendURL}) {
         setMake(make)
     }
 
+    // Calls the Delete route handler.
+    const onDelete = async (id) => {
+        const response = await fetch(backendURL + `/vehicle-makes/${id}`, { method: 'DELETE' });
+        if (response.status === 204) {
+            setVehicleMakes(vehicleMakes.filter( e => e['ID'] !== id))
+        } else {
+            alert(`Vehicle make with id = ${id} is currently used by a child asset; status code = ${response.status}`)
+        }
+    }
+
     return (
         <>
             <h2>Vehicle Makes</h2>
             <MakeForm mode={mode} makeToEdit={makeToEdit}></MakeForm>
             <button className='make-model-add-button'>Add Make</button>
-            <Table tableData={vehicleMakes} onEdit={onEdit} ></Table>
+            <Table tableData={vehicleMakes} onEdit={onEdit} onDelete={onDelete}></Table>
         </>
     );
 }

@@ -38,12 +38,22 @@ function FirearmModelsPage({backendURL}) {
         setModel(make)
     }
 
+    // Calls the Delete route handler.
+    const onDelete = async (id) => {
+        const response = await fetch(backendURL + `/firearm-models/${id}`, { method: 'DELETE' });
+        if (response.status === 204) {
+            setFirearmModels(firearmModels.filter( e => e['ID'] !== id))
+        } else {
+            alert(`Firearm model with id = ${id} is currently used by a child asset; status code = ${response.status}`)
+        }
+    }
+
     return (
         <>
             <h2>Firearm Models</h2>
             <ModelForm mode={mode} modelToEdit={modelToEdit}></ModelForm>
             <button className='make-model-add-button'>Add Model</button>
-            <Table tableData={firearmModels} onEdit={onEdit}></Table>
+            <Table tableData={firearmModels} onEdit={onEdit} onDelete={onDelete}></Table>
         </>
     );
 }
