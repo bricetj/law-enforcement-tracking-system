@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Dropdown from '../components/Dropdown';
 
 /**
  * Creates an HTML form that can be used for both editing and creating
@@ -7,7 +8,7 @@ import { useEffect, useState } from 'react';
  * @param {object} vehicleToEdit A Vehicles object.
  * @returns An HTML form with various inputs for Vehicles data.
  */
-function VehicleForm ({mode, vehicleToEdit}) {
+function VehicleForm ({mode, backendURL, vehicleToEdit}) {
     const [vehicleData, setVehicleData] = useState({});
     
     // Sets form data to particular Vehicle if the form is in 'edit' mode.
@@ -50,7 +51,18 @@ function VehicleForm ({mode, vehicleToEdit}) {
                         value={vehicleData['Color'] || ''}
                         onChange={onChangeHandler}>
                             <option value='' disabled>Select Color</option>
-                            <option value={vehicleData['Color'] || ''}>{vehicleData['Color'] || ''}</option>
+                            <option value='Black'>Black</option>
+                            <option value='Blue'>Blue</option>
+                            <option value='Brown'>Brow</option>
+                            <option value='Gold'>Gold</option>
+                            <option value='Green'>Green</option>
+                            <option value='Gray'>Gray</option>
+                            <option value='Orange'>Orange</option>
+                            <option value='Purple'>Purple</option>
+                            <option value='Red'>Red</option>
+                            <option value='Silver'>Silver</option>
+                            <option value='White'>White</option>
+                            <option value='Yellow'>Yellow</option>
                     </select>
                 </label>
                 &nbsp;&nbsp;
@@ -66,29 +78,23 @@ function VehicleForm ({mode, vehicleToEdit}) {
                 <br/>
                 <br/>
                 <label>Make:&nbsp;
-                    <select
-                        type='text'
-                        name='Make'
-                        required='required'
-                        placeholder='Select vehicle make'
-                        value={vehicleData['Make'] || ''}
-                        onChange={onChangeHandler}>
-                            <option value='' disabled>Select Make</option>
-                            <option value={vehicleData['Make'] || ''}>{vehicleData['Make'] || ''}</option>
-                    </select>
+                    <Dropdown
+                        backendURL={backendURL}
+                        routePath={'/vehicle-makes'}
+                        colName='Make'
+                        isRequired='required'
+                        selectedVal={vehicleData['Make'] || ''}>
+                    </Dropdown>
                 </label>
                 &nbsp;&nbsp;
                 <label>Model:&nbsp;
-                    <select
-                        type='text'
-                        name='Model'
-                        required='required'
-                        placeholder='Select vehicle model'
-                        value={vehicleData['Model'] || ''}
-                        onChange={onChangeHandler}>
-                            <option value='' disabled>Select Model</option>
-                            <option value={vehicleData['Model'] || ''}>{vehicleData['Model'] || ''}</option>
-                    </select>
+                    <Dropdown
+                        backendURL={backendURL}
+                        routePath={`/vehicle-models`}
+                        colName='Model'
+                        isRequired='required'
+                        selectedVal={vehicleData['Model'] || ''}>
+                    </Dropdown>
                 </label>
                 &nbsp;&nbsp;
                 <label>License Plate:&nbsp;
@@ -103,15 +109,13 @@ function VehicleForm ({mode, vehicleToEdit}) {
                 <br/>
                 <br/>
                 <label>Assigned Officer:&nbsp;
-                    <select
-                        type='text'
-                        name='Assigned Officer'
-                        placeholder='Select Officer'
-                        value={vehicleData['Assigned Officer'] || ''}
-                        onChange={onChangeHandler}>
-                            <option value='' disabled>Select Officer</option>
-                            <option value={vehicleData['Assigned Officer'] || ''}>{vehicleData['Assigned Officer'] || ''}</option>
-                    </select>
+                    <Dropdown
+                        backendURL={backendURL}
+                        routePath={'/officers'}
+                        colName='Last Name'
+                        isRequired='required'
+                        selectedVal={vehicleData['Assigned Officer'] || ''}>
+                    </Dropdown>
                 </label>
                 &nbsp;&nbsp;
                 <label>Status:&nbsp;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Dropdown from '../components/Dropdown';
 
 /**
  * Creates an HTML form that can be used for both editing and creating
@@ -7,7 +8,7 @@ import { useEffect, useState } from 'react';
  * @param {object} modelToEdit Either a FirearmModels or VehicleModels object.
  * @returns An HTML form with various inputs for firearm or vehicle model data.
  */
-function ModelForm ({mode, modelToEdit}) {
+function ModelForm ({backendURL, mode, modelToEdit, modelType}) {
     const [modelData, setModelData] = useState({});
     
     // Sets form data to particular model if the form is in 'edit' mode.
@@ -31,15 +32,13 @@ function ModelForm ({mode, modelToEdit}) {
     return (
         <div className='model-form'>
             <label>Make:&nbsp;
-                <select
-                    type='text'
-                    name='Make'
-                    required='required'
-                    value={modelData['Make'] || ''}
-                    onChange={onChangeHandler}>
-                        <option value='' disabled>Select Make</option>
-                        <option value={modelData['Make'] || ''}>{modelData['Make'] || ''}</option>
-                </select>
+                <Dropdown
+                    backendURL={backendURL}
+                    routePath={`/${modelType}-makes`}
+                    colName='Make'
+                    isRequired='required'
+                    selectedVal={modelData['Make'] || ''}>
+                </Dropdown>
             </label>
             &nbsp;&nbsp;
             <label>Model:&nbsp;

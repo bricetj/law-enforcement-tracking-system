@@ -8,11 +8,11 @@ import VehicleForm from '../components/VehicleForm.jsx';
  * mode.
  * @param {object} vehicleToEdit A Vehicles object to be edited.
  */
-function CreateOrEditVehiclePage({mode, title, vehicleToEdit}) {
+function CreateOrEditVehiclePage({backendURL, mode, title, vehicleToEdit}) {
     return (
         <>
             <h2>{title}</h2>
-            <VehicleForm mode={mode} vehicleToEdit={vehicleToEdit}></VehicleForm>
+            <VehicleForm backendURL={backendURL} mode={mode} vehicleToEdit={vehicleToEdit}></VehicleForm>
         </>
     );
 }

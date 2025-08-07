@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Table from '../components/Table';
+import Dropdown from '../components/Dropdown';
 
 /**
  * Creates an HTML form that can be used for both editing and creating
@@ -9,7 +10,7 @@ import Table from '../components/Table';
  * @param {object} incidentData An Incidents object.
  * @returns An HTML form with various inputs for Incidents data.
  */
-function IncidentForm ({mode, incidentData, otherOfficers, editButtonHandler}) {
+function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButtonHandler}) {
     const [incident, setIncidentData] = useState({});
 
     // For use in restricting editing when in 'view' mode.
@@ -62,16 +63,14 @@ function IncidentForm ({mode, incidentData, otherOfficers, editButtonHandler}) {
                 </label>
                 &nbsp;&nbsp;
                 <label>Case Officer:&nbsp;
-                    <select
-                        type='text'
-                        name='Last Name'
-                        readOnly = {isReadOnly}
-                        required='required'
-                        value={incident['Last Name'] || ''}
-                        onChange={onChangeHandler}>
-                            <option value='' disabled>Select Case Officer</option>
-                            <option value={incident['Last Name'] || ''}>{incident['Last Name'] || ''}</option>
-                    </select>
+                    <Dropdown
+                        backendURL={backendURL}
+                        routePath={'/officers'}
+                        colName='Last Name'
+                        isReadOnly={isReadOnly}
+                        isRequired='required'
+                        selectedVal={incident['Last Name'] || ''}>
+                    </Dropdown>
                 </label>
                 &nbsp;&nbsp;
                 <label>Status:&nbsp;
@@ -89,20 +88,21 @@ function IncidentForm ({mode, incidentData, otherOfficers, editButtonHandler}) {
                 <br/>
                 <br/>
                 <div className='narrative-container'>
-                    <label>Narrative:&nbsp;
-                    <textarea className='incident-narrative'
-                        type='text'
-                        name='Narrative'
-                        readOnly = {isReadOnly}
-                        placeholder='Enter your narrative here'
-                        value={incident['Narrative'] || ''}
-                        onChange={onChangeHandler} />
+                    <label>Narrative:<br/>
+                        <textarea className='incident-narrative'
+                            type='text'
+                            name='Narrative'
+                            readOnly = {isReadOnly}
+                            placeholder='Enter your narrative here'
+                            value={incident['Narrative'] || ''}
+                            onChange={onChangeHandler} />
                     </label>
                 &nbsp;&nbsp;
                     <div className='small-table-container'>
                         <label>Affiliated Officers
                             <Table  tableData={otherOfficers}></Table>
                         </label>
+                        <a href='#'>+ Add an Officer</a>
                     </div>
                 </div>
                 

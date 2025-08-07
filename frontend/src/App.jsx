@@ -47,14 +47,14 @@ function App() {
           <Route path='/create-incident' element={<IncidentViewPage pageTitle={'Create Incident'} mode={'create'} backendURL={backendURL}/>}></Route>
           <Route path='/view-incident' element={<IncidentViewPage pageTitle={'View Incident'} mode={'view'} backendURL={backendURL} incidentToView={incidentToView}/>}></Route>
           <Route path='/edit-incident' element={<IncidentViewPage mode={'edit'} backendURL={backendURL} incidentToView={incidentToView}/>}></Route>
-          <Route path='/create-vehicle' element={<CreateOrEditVehiclePage mode={'create'} title={'Add Vehicle'}/>}></Route>
-          <Route path='/edit-vehicle' element={<CreateOrEditVehiclePage mode={'edit'} title={'Edit Vehicle'} vehicleToEdit={vehicleToEdit}/>}></Route>
-          <Route path='/create-firearm' element={<CreateOrEditFirearmPage mode={'create'} title={'Add Firearm'}/>}></Route>
-          <Route path='/edit-firearm' element={<CreateOrEditFirearmPage mode={'edit'} title={'Edit Firearm'} firearmToEdit={firearmToEdit}/>}></Route>
+          <Route path='/create-vehicle' element={<CreateOrEditVehiclePage backendURL={backendURL} mode={'create'} title={'Add Vehicle'}/>}></Route>
+          <Route path='/edit-vehicle' element={<CreateOrEditVehiclePage backendURL={backendURL} mode={'edit'} title={'Edit Vehicle'} vehicleToEdit={vehicleToEdit}/>}></Route>
+          <Route path='/create-firearm' element={<CreateOrEditFirearmPage backendURL={backendURL} mode={'create'} title={'Add Firearm'}/>}></Route>
+          <Route path='/edit-firearm' element={<CreateOrEditFirearmPage backendURL={backendURL} mode={'edit'} title={'Edit Firearm'} firearmToEdit={firearmToEdit}/>}></Route>
           <Route path='/vehicle-makes' element={<VehicleMakesPage backendURL={backendURL}/>}></Route>
-          <Route path='/vehicle-models' element={<VehicleModelsPage backendURL={backendURL}/>}></Route>
+          <Route path='/vehicle-models' element={<VehicleModelsPage modelType = 'vehicle' backendURL={backendURL}/>}></Route>
           <Route path='/firearm-makes' element={<FirearmMakesPage backendURL={backendURL}/>}></Route>
-          <Route path='/firearm-models' element={<FirearmModelsPage backendURL={backendURL}/>}></Route>
+          <Route path='/firearm-models' element={<FirearmModelsPage modelType = 'firearm' backendURL={backendURL}/>}></Route>
         </Routes>
       </Router>
       <footer>

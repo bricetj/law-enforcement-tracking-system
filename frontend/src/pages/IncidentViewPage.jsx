@@ -55,7 +55,7 @@ function IncidentViewPage( {pageTitle, mode, backendURL, incidentToView} ) {
         <>
             <h2>{title}</h2>
             <Link to='/edit-incident'>{mode !=='create' && isVisible && <button onClick={editTitleHandler} className='add-button'>Edit Incident</button>}</Link>
-            <IncidentForm mode={mode} incidentData={incident[0]} otherOfficers={incident[1]} editButtonHandler={editButtonHandler}></IncidentForm>
+            <IncidentForm backendURL={backendURL} mode={mode} incidentData={incident[0]} otherOfficers={incident[1]} editButtonHandler={editButtonHandler}></IncidentForm>
         </>
     );
 }

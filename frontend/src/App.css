@@ -105,6 +105,10 @@ p {
     justify-content: center;
 }
 
+.narrative-container label {
+    text-align: left;
+}
+
 .table-container {
     min-width: 1000px;
     max-width: 1105px;
@@ -116,8 +120,18 @@ p {
     max-width: 300px;
 }
 
+.small-table-container table {
+    background-color: white;
+    width: 300px;
+}
+
 .small-table-container table thead {
     display: none;
+}
+
+.small-table-container a {
+    text-decoration: none;
+    margin: 10px;
 }
 
 table {

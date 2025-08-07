@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Dropdown from '../components/Dropdown';
 
 /**
  * Creates an HTML form that can be used for both editing and creating
@@ -7,7 +8,7 @@ import { useEffect, useState } from 'react';
  * @param {object} firearmToEdit A Firearms object.
  * @returns An HTML form with various inputs for Firearms data.
  */
-function FirearmForm ({mode, firearmToEdit}) {
+function FirearmForm ({backendURL, mode, firearmToEdit}) {
     const [firearmData, setFirearmData] = useState({});
     
     // Sets form data to particular firearm if the form is in 'edit' mode.
@@ -53,41 +54,34 @@ function FirearmForm ({mode, firearmToEdit}) {
                 <br/>
                 <br/>
                 <label>Make:&nbsp;
-                    <select
-                        type='text'
-                        name='Make'
-                        required='required'
-                        placeholder='Select firearm make'
-                        value={firearmData['Make'] || ''}
-                        onChange={onChangeHandler}>
-                            <option value='' disabled>Select Make</option>
-                            <option value={firearmData['Make'] || ''}>{firearmData['Make'] || ''}</option>
-                    </select>
+                    <Dropdown
+                        backendURL={backendURL}
+                        routePath={`/firearm-makes`}
+                        colName='Make'
+                        isRequired='required'
+                        selectedVal={firearmData['Make'] || ''}>
+                    </Dropdown>
                 </label>
                 &nbsp;&nbsp;
                 <label>Model:&nbsp;
-                    <select
-                        type='text'
-                        name='Model'
-                        required='required'
-                        placeholder='Select firearm model'
-                        value={firearmData['Model'] || ''}
-                        onChange={onChangeHandler}>
-                            <option value='' disabled>Select Model</option>
-                            <option value={firearmData['Model'] || ''}>{firearmData['Model'] || ''}</option>
-                    </select>
+                    <Dropdown
+                        backendURL={backendURL}
+                        routePath={`/firearm-models`}
+                        colName='Model'
+                        isRequired='required'
+                        selectedVal={firearmData['Model'] || ''}>
+                    </Dropdown>
                 </label>
                 <br/>
                 <br/>
                 <label>Assigned Officer:&nbsp;
-                    <select
-                        type='text'
-                        name='Assigned Officer'
-                        value={firearmData['Assigned Officer'] || ''}
-                        onChange={onChangeHandler}>
-                            <option value='' disabled>Select Officer</option>
-                            <option value={firearmData['Assigned Officer'] || ''}>{firearmData['Assigned Officer'] || ''}</option>
-                    </select>
+                    <Dropdown
+                        backendURL={backendURL}
+                        routePath={'/officers'}
+                        colName='Last Name'
+                        isRequired='required'
+                        selectedVal={firearmData['Assigned Officer'] || ''}>
+                    </Dropdown>
                 </label>
                 &nbsp;&nbsp;
                 <label>Status:&nbsp;

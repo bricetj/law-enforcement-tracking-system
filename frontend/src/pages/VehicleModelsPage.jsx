@@ -7,7 +7,7 @@ import ModelForm from '../components/ModelForm';
  * @param {string} backendURL The URL used to host the application.
  * Is needed to initiate get requests.
  */
-function VehicleModelsPage({backendURL}) {
+function VehicleModelsPage({backendURL, modelType}) {
     const [vehicleModels, setVehicleModels] = useState([]);
     const [mode, setMode] = useState('create');
     const [modelToEdit, setModel] = useState();
@@ -51,7 +51,7 @@ function VehicleModelsPage({backendURL}) {
     return (
         <>
             <h2>Vehicle Models</h2>
-            <ModelForm mode={mode} modelToEdit={modelToEdit}></ModelForm>
+            <ModelForm backendURL={backendURL} mode={mode} modelToEdit={modelToEdit} modelType={modelType}></ModelForm>
             <button className='make-model-add-button'>Add Model</button>
             <div className='table-container'>
                 <Table tableData={vehicleModels} onEdit={onEdit} onDelete={onDelete}></Table>

@@ -172,6 +172,7 @@ app.get('/vehicle-models', async (req, res) => {
     }
 });
 
+
 app.get('/firearm-makes', async (req, res) => {
     try {
         // Define queries

@@ -8,11 +8,11 @@ import FirearmForm from '../components/FirearmForm.jsx';
  * mode.
  * @param {object} firearmToEdit A Firearms object to be edited.
  */
-function CreateOrEditFirearmPage({mode, title, firearmToEdit}) {
+function CreateOrEditFirearmPage({backendURL, mode, title, firearmToEdit}) {
     return (
         <>
             <h2>{title}</h2>
-            <FirearmForm mode={mode} firearmToEdit={firearmToEdit}></FirearmForm>
+            <FirearmForm backendURL={backendURL} mode={mode} firearmToEdit={firearmToEdit}></FirearmForm>
         </>
     );
 }
