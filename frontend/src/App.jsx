@@ -1,5 +1,17 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ * 
+ * Citation for the following code:
+ * Date: 7/31/2025
+ * Port creation language adapted from Canvas starter code on
+ * Activity 2 - Connect webapp to database (Individual).
+ * Source URL: https://canvas.oregonstate.edu/courses/2007765/assignments/10118865?module_item_id=25664551
+ */
+
+
 import './App.css';
-import { useState, useEffect } from 'react';  // Importing useState for managing state in the component
+import { useState } from 'react';
 import Navigation from './components/Navigation';
 import HomePage from './pages/HomePage';
 import OfficersPage from './pages/OfficersPage';
@@ -17,8 +29,8 @@ import FirearmMakesPage from './pages/FirearmMakesPage';
 import FirearmModelsPage from './pages/FirearmModelsPage';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Define the backend port and URL for API requests
-const backendPort = 4253;  // Use the port you assigned to the backend server, this would normally go in .env file
+// Defines the backend port and URL for API requests.
+const backendPort = 4253;
 const backendURL = `http://classwork.engr.oregonstate.edu:${backendPort}`;
 
 function App() {

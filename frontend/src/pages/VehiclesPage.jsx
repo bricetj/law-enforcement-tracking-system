@@ -1,3 +1,8 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Table from '../components/Table.jsx';
@@ -52,9 +57,15 @@ function VehiclesPage( {backendURL, setVehicleToEdit} ) {
     return (
         <>
             <h2>Vehicles</h2>
-            <Link to='/create-vehicle'><button className='add-button'>Add Vehicle</button></Link>
+            <Link to='/create-vehicle'>
+                <button className='add-button'>Add Vehicle</button>
+            </Link>
             <div className='table-container'>
-                <Table tableData={vehicles} onEdit={onEdit} onDelete={onDelete}></Table>
+                <Table
+                    tableData={vehicles}
+                    onEdit={onEdit}
+                    onDelete={onDelete}>
+                </Table>
             </div>
         </>
     );

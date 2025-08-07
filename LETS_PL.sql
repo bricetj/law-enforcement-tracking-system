@@ -1,3 +1,17 @@
+/******************************************************************************
+    File Name:      LETS_PL.sql
+    Description:    Creates procedure language for CRUD operations on the site.
+    Authors:        Brice Jenkins, Andrew Heilesen [Team 36 - The Officers]
+    Class/Section:  CS340 Introduction to Databases
+    Assignment:     Project Step 4
+    Date Created:   August 6, 2025
+    Last Modified:  August 7, 2025
+
+******************************************************************************/
+
+--
+-- Creates a stored procedure to delete an officer by ID.
+--
 DROP PROCEDURE IF EXISTS sp_delete_officer;
 DELIMITER //
 CREATE PROCEDURE sp_delete_officer(
@@ -23,7 +37,9 @@ END //
 DELIMITER ;
 
 
-
+--
+-- Creates a stored procedure to delete an incident by ID.
+--
 DROP PROCEDURE IF EXISTS sp_delete_incident;
 DELIMITER //
 CREATE PROCEDURE sp_delete_incident(
@@ -49,8 +65,9 @@ END //
 DELIMITER ;
 
 
-
-
+--
+-- Creates a stored procedure to delete a vehicle by ID.
+--
 DROP PROCEDURE IF EXISTS sp_delete_vehicle;
 DELIMITER //
 CREATE PROCEDURE sp_delete_vehicle(
@@ -76,8 +93,9 @@ END //
 DELIMITER ;
 
 
-
-
+--
+-- Creates a stored procedure to delete a vehicle make by ID.
+--
 DROP PROCEDURE IF EXISTS sp_delete_vehicle_make;
 DELIMITER //
 CREATE PROCEDURE sp_delete_vehicle_make(
@@ -103,8 +121,9 @@ END //
 DELIMITER ;
 
 
-
-
+--
+-- Creates a stored procedure to delete a vehicle model by ID.
+--
 DROP PROCEDURE IF EXISTS sp_delete_vehicle_model;
 DELIMITER //
 CREATE PROCEDURE sp_delete_vehicle_model(
@@ -130,8 +149,9 @@ END //
 DELIMITER ;
 
 
-
-
+--
+-- Creates a stored procedure to delete a firearm by ID.
+--
 DROP PROCEDURE IF EXISTS sp_delete_firearm;
 DELIMITER //
 CREATE PROCEDURE sp_delete_firearm(
@@ -157,8 +177,9 @@ END //
 DELIMITER ;
 
 
-
-
+--
+-- Creates a stored procedure to delete a firearm make by ID.
+--
 DROP PROCEDURE IF EXISTS sp_delete_firearm_make;
 DELIMITER //
 CREATE PROCEDURE sp_delete_firearm_make(
@@ -184,7 +205,9 @@ END //
 DELIMITER ;
 
 
-
+--
+-- Creates a stored procedure to delete a firearm model by ID.
+--
 DROP PROCEDURE IF EXISTS sp_delete_firearm_model;
 DELIMITER //
 CREATE PROCEDURE sp_delete_firearm_model(

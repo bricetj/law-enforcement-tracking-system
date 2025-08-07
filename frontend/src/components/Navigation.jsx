@@ -1,3 +1,8 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
 import { Link } from 'react-router-dom';
 
 /**

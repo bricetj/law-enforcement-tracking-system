@@ -1,3 +1,9 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
+
 import { useEffect, useState } from 'react';
 import Dropdown from '../components/Dropdown';
 
@@ -5,6 +11,8 @@ import Dropdown from '../components/Dropdown';
  * Creates an HTML form that can be used for both editing and creating
  * Vehicles entries. 
  * @param {string} mode A mode, either 'create' or 'edit'.
+ * @param {string} backendURL The URL used to host the application.
+ * Is needed to initiate get requests.
  * @param {object} vehicleToEdit A Vehicles object.
  * @returns An HTML form with various inputs for Vehicles data.
  */

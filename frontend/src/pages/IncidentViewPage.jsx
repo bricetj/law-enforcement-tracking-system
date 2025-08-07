@@ -1,3 +1,8 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import IncidentForm from '../components/IncidentForm.jsx';
@@ -54,8 +59,18 @@ function IncidentViewPage( {pageTitle, mode, backendURL, incidentToView} ) {
     return (
         <>
             <h2>{title}</h2>
-            <Link to='/edit-incident'>{mode !=='create' && isVisible && <button onClick={editTitleHandler} className='add-button'>Edit Incident</button>}</Link>
-            <IncidentForm backendURL={backendURL} mode={mode} incidentData={incident[0]} otherOfficers={incident[1]} editButtonHandler={editButtonHandler}></IncidentForm>
+            <Link to='/edit-incident'>
+                { mode !=='create' && isVisible &&
+                    <button onClick={editTitleHandler} className='add-button'>Edit Incident</button>
+                }
+            </Link>
+            <IncidentForm
+                backendURL={backendURL}
+                mode={mode}
+                incidentData={incident[0]}
+                otherOfficers={incident[1]}
+                editButtonHandler={editButtonHandler}>
+            </IncidentForm>
         </>
     );
 }

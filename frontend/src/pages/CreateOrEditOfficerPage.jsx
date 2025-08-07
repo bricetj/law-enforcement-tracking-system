@@ -1,3 +1,8 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
 import OfficerForm from '../components/OfficerForm.jsx';
 
 /**
@@ -12,7 +17,10 @@ function CreateOrEditOfficerPage({mode, title, officerToEdit}) {
     return (
         <>
             <h2>{title}</h2>
-            <OfficerForm mode={mode} officerToEdit={officerToEdit}></OfficerForm>
+            <OfficerForm
+                mode={mode}
+                officerToEdit={officerToEdit}>
+            </OfficerForm>
         </>
     );
 }

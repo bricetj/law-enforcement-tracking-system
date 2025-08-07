@@ -1,17 +1,25 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import PopupWindow from '../components/PopupWindow';
 
+
 /**
  * A React page component to display links for modifying vehicle/firearms
- * makes/models and other admin content (if added later).
+ * makes/models, reset site data, and other admin content (if added later).
+ * @param {string} backendURL The URL used to host the application.
+ * Is needed to initiate get requests.
  */
 function AdminPage({backendURL}) {
     const [popupOpen, setPopupOpen] = useState(false);
     const navigate = useNavigate();
 
 
-    // Calls the 'POST /api/reset' endpoint in the REST API.
+    // Calls the 'POST /reset-database' endpoint in the REST API.
     const resetSite = async () => {
         const response = await fetch(backendURL + '/reset-database', {
                     method: 'POST',
@@ -28,12 +36,12 @@ function AdminPage({backendURL}) {
         navigate('/')
     };
 
-    // Handles opening the popup window.
+    // Handles opening the reset popup window.
     const openPopupHandler = () => {
         setPopupOpen(true);
     }
 
-    // Handles closing the popup window.
+    // Handles closing the reset popup window.
     const onClose = () => {
         setPopupOpen(false);
     }
@@ -58,6 +66,8 @@ function AdminPage({backendURL}) {
                     <a href='#' onClick={openPopupHandler}>Reset Site Data</a>
                     <PopupWindow text={'Are you sure you want to reset the site data?'}
                                  isVisible={popupOpen}
+                                 noButtonText={'No'}
+                                 yesButtonText={'Yes'}
                                  onNo={onClose}
                                  onYes={onReset}
 

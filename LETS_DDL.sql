@@ -7,7 +7,7 @@
     Class/Section:  CS340 Introduction to Databases
     Assignment:     Project Step 2 - DDL
     Date Created:   July 22, 2025
-    Last Modified:  August 6, 2025
+    Last Modified:  August 7, 2025
 
 ******************************************************************************/
 
@@ -198,10 +198,10 @@ CREATE OR REPLACE TABLE Incidents (
 );
 
 INSERT INTO Incidents (date, description, isActive)
-VALUES ('20200415', "On April 15, 2020, at approximately 9:00 p.m., I responded to a report of a vehicle break-in in the PVA of Max Rebo Hardware, located at 403 West Fordham Blvd. After I arrived on scene, I observed a male subject, later identified as Max Rebo, using a lock picking device to open the driver side door of a Blue 2020 Honda Civic (VA Registration: RBC3445) which was registered to Rebo. I exited my vehicle and spoke with Rebo who said he locked his keys in his vehicle and needed assistance. Rebo stated he did not know how to use the device and gave me permission to assist him. I used the lock opening device and successfully opened the driver side door for Rebo to enter his vehicle. At approximately 9:20 p.m., I left the PVA of Max Rebo Hardware.", 0),
+VALUES ('20200415', "On April 15, 2020, at approximately 9:00 p.m., Officer H. Potter and I responded to a report of a vehicle break-in in the PVA of Max Rebo Hardware, located at 403 West Fordham Blvd. After we arrived on scene, I observed a male subject, later identified as Max Rebo, using a lock picking device to open the driver side door of a Blue 2020 Honda Civic (VA Registration: RBC3445) which was registered to Rebo. We exited our patrol vehicle and spoke with Rebo who said he locked his keys in his vehicle and needed assistance. Rebo stated he did not know how to use the device and gave me permission to assist him. I used the lock opening device and successfully opened the driver side door for Rebo to enter his vehicle. At approximately 9:20 p.m., Officer Potter and I left the PVA of Max Rebo Hardware.", 0),
        ('20220316', "On March 16, 2022, at approximately 2:00 a.m., Officer G. Lakish and I responded to a report of loud music coming from a residence located at 223 Coastal Ave. We arrived on scene and approached the front door. I made contact with the house owner, identified as Bobby Rigsby, and told Rigsby ECPD received complaints due to the loud music. Rigsby turned down the music and stated, 'The party is pretty much over anyway.' At approximately 2:10 a.m., Officer Lakish and I entered our patrol vehicles and left the scene.", 0),
-       ('20221112', "On November 12, 2022, at approximately 4:00 a.m., I responded to a report of a suspicious person carrying a backpack and running behind residences located on the 300 block of Coastal Avenue. As I drove past the 400 block of Coastal Avenue, I observed a male subject, identified as Rick Jenkins, running in athletic clothing with a backpack. Jenkins had a flashlight in his right hand. I activated my vehicle's emergency lights temporarily to signal to Jenkins to stop. I then exited my patrol vehicle and made contact with Jenkins. Jenkins explained he was running for exercise and used a weighted backpack to enhance his training. Jenkins gave me consent to search his backpack. I looked inside the main compartment of the backpack and located some sandbags, energy gels, and a water bottle. I told Jenkins to enjoy his run and then exited the scene at approximately 4:10 a.m.", 0),
-       ('20230920', "On September 20, 2023, at approximately 2:00 p.m., while driving westbound on Highway 34 near the 56 mile marker, I observed a Red 2023 Porsche 911 (VA Registration LTHMCOOK) overtake my vehicle at a high rate of speed. I paced the vehicle for approximately 1 mile and observed the calibrated speedometer on my patrol vehicle read 90 mph. The speed limit on Hwy 34 is 65 mph. I activated my emergency lights and siren and conducted a traffic stop of the vehicle. I approached the passenger side of the vehicle and made contact with the driver, identified as Jim Diesel. I introduced myself and asked Diesel for his license. Diesel admitted he was speeding and apologized. He explained he just purchased his vehicle and wanted to 'let it cook'. I returned to my vehicle and checked Diesel's information through dispatch. I then issued Diesel a written warning for speeding and told him he was free to go. At approximately 2:15 p.m., I returned to my patrol vehicle and left the scene.", 0);
+       ('20221112', "On November 12, 2022, at approximately 4:00 a.m., I responded to a report of a suspicious person carrying a backpack and running behind residences located on the 300 block of Coastal Avenue. As I drove past the 400 block of Coastal Avenue, I observed a male subject, identified as Rick Jenkins, running in athletic clothing with a backpack. Jenkins had a flashlight in his right hand. I activated my vehicle's emergency lights temporarily to signal to Jenkins to stop. I then exited my patrol vehicle and made contact with Jenkins. Officer J. Livingston arrived on scene shortly after. Jenkins explained he was running for exercise and used a weighted backpack to enhance his training. Jenkins gave me consent to search his backpack. I looked inside the main compartment of the backpack and located some sandbags, energy gels, and a water bottle. I told Jenkins to enjoy his run, and then Officer Livingston and I exited the scene at approximately 4:10 a.m.", 0),
+       ('20230920', "On September 20, 2023, at approximately 2:00 p.m., while driving westbound on Highway 34 near the 56 mile marker, I observed a Red 2023 Porsche 911 (VA Registration LTHMCOOK) overtake my vehicle at a high rate of speed. I paced the vehicle for approximately 1 mile and observed the calibrated speedometer on my patrol vehicle read 90 mph. The speed limit on Hwy 34 is 65 mph. I activated my emergency lights and siren and conducted a traffic stop of the vehicle. I approached the passenger side of the vehicle and made contact with the driver, identified as Jim Diesel. I introduced myself and asked Diesel for his license. Diesel admitted he was speeding and apologized. He explained he just purchased his vehicle and wanted to 'let it cook'. Officers R. Manly and G. Lakish arrived on scene and spoke with Diesel. I returned to my vehicle and checked Diesel's information through dispatch. I then issued Diesel a written warning for speeding and told him he was free to go. At approximately 2:15 p.m., Officers Manly, Lakish, and I returned to our patrol vehicles and left the scene.", 0);
 
 /*
 Creates the OfficerIncidents table and inserts sample data. This is an
@@ -218,7 +218,15 @@ CREATE OR REPLACE TABLE OfficerIncidents (
 );
 
 INSERT INTO OfficerIncidents (officerID, incidentID, isCaseOfficer)
-VALUES (1, 1, 1),(4, 2, 1),(3, 2, 0),(2, 3, 1),(5, 4, 1);
+VALUES  (1, 1, 1),
+        (5, 1, 0),
+        (4, 2, 1),
+        (3, 2, 0),
+        (1, 3, 0),
+        (2, 3, 1),
+        (5, 4, 1),
+        (2, 4, 0),
+        (3, 4, 0);
 
 SET FOREIGN_KEY_CHECKS = 1;
 COMMIT;

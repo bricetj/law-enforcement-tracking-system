@@ -1,3 +1,8 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Table from '../components/Table';
@@ -52,7 +57,9 @@ function FirearmsPage( {backendURL, setFirearmToEdit} ) {
     return (
         <>
             <h2>Firearms</h2>
-            <Link to='/create-firearm'><button className='add-button'>Add Firearm</button></Link>
+            <Link to='/create-firearm'>
+                <button className='add-button'>Add Firearm</button>
+            </Link>
             <div className='table-container'>
                 <Table tableData={firearms} onEdit={onEdit} onDelete={onDelete}></Table>
             </div>

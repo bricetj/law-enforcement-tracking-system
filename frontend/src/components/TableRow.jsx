@@ -1,3 +1,8 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
 import { MdCreate, MdDelete, MdOutlinePageview } from 'react-icons/md';
 import Tooltip from './Tooltip';
 
@@ -7,11 +12,15 @@ import Tooltip from './Tooltip';
  * if from Incidents, the edit icon is replaced by a view icon.
  * @param {boolean} isIncidents Determines if a table is for Incidents or not.
  * @param {object} rowObject An object of data representing a row.
- * @param {function} onEdit A function that sets a variable with data to be
- * edited and initiates editing procedures.
+ * @param {function} onEdit A function that runs when the edit icon is selected
+ * in the table.
+ * @param {function} onView A function runs when the view icon is selected in
+ * the table.
+ * @param {function} onDelete A function that runs when the delete icon is
+ * selected in the table.
  * @returns A React element that renders an HTML table row.
  */
-const TableRow = ({ isIncidents, rowObject, onEdit, onView, onDelete, deleteID }) => {
+const TableRow = ({ isIncidents, rowObject, onEdit, onView, onDelete}) => {
     const objectID = rowObject['ID'];
     return (
         <tr>

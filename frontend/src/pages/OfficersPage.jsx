@@ -1,3 +1,8 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Table from '../components/Table';
@@ -52,9 +57,15 @@ function OfficersPage( {backendURL, setOfficerToEdit} ) {
     return (
         <>
             <h2>Officers</h2>
-            <Link to='/create-officers'><button className='add-button'>Add Officer</button></Link>
+            <Link to='/create-officers'>
+                <button className='add-button'>Add Officer</button>
+            </Link>
             <div className='table-container'>
-                <Table tableData={officers} onEdit={onEdit} onDelete={onDelete}></Table>
+                <Table
+                    tableData={officers}
+                    onEdit={onEdit}
+                    onDelete={onDelete}>
+                </Table>
             </div>
         </>
     );

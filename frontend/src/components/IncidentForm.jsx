@@ -1,17 +1,28 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import Table from '../components/Table';
 import Dropdown from '../components/Dropdown';
+import PopupWindow from './PopupWindow';
 
 /**
  * Creates an HTML form that can be used for both editing and creating
  * Incidents entries. 
+ * @param {string} backendURL The URL used to host the application.
+ * Is needed to initiate get requests.
  * @param {string} mode A mode, either 'create', 'edit', or 'view'.
- * @param {object} incidentData An Incidents object.
+ * @param {array} incidentData An Incidents object in an array.
+ * @param {array} otherOfficers Officers objects in an array.
+ * @param {function} editButtonHandler A function to change edit button state
+ * when save button is pressed.
  * @returns An HTML form with various inputs for Incidents data.
  */
 function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButtonHandler}) {
     const [incident, setIncidentData] = useState({});
+    const [popupOpen, setPopupOpen] = useState(false);
 
     // For use in restricting editing when in 'view' mode.
     let isReadOnly = true;
@@ -36,6 +47,21 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
             [name]: value
         }));
     }
+
+    // Handles opening the popup window.
+    const openPopupHandler = () => {
+        setPopupOpen(true);
+    }
+
+    // Handles closing the popup window.
+    const onClose = () => {
+        setPopupOpen(false);
+    }
+
+    const onSave = () => {
+        setPopupOpen(false);
+    }
+
 
     return (
         <div className='incident-form'>
@@ -102,11 +128,24 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
                         <label>Affiliated Officers
                             <Table  tableData={otherOfficers}></Table>
                         </label>
-                        <a href='#'>+ Add an Officer</a>
+                        <a href='#' onClick={openPopupHandler}>+ Add an Officer</a>
+                        <PopupWindow 
+                            text={'Add an Affiliated Officer'}
+                            isVisible={popupOpen}
+                            childElement={
+                                <Dropdown
+                                    backendURL={backendURL}
+                                    routePath={'/officers'}
+                                    colName='Last Name'>
+                                </Dropdown>
+                            }
+                            noButtonText={'Cancel'}
+                            yesButtonText={'Save'}
+                            onNo={onClose}
+                            onYes={onSave}
+                        ></PopupWindow>
                     </div>
                 </div>
-                
-                
                 <br/>
                 <br/>
                 <div className='update-button'>

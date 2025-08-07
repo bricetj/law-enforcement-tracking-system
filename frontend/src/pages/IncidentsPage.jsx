@@ -1,3 +1,8 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Table from '../components/Table';
@@ -53,7 +58,9 @@ function IncidentsPage( {backendURL, setIncidentToView} ) {
     return (
         <>
             <h2>Incidents</h2>
-            <Link to='/create-incident'><button className='add-button'>Add Incident</button></Link>
+            <Link
+                to='/create-incident'><button className='add-button'>Add Incident</button>
+            </Link>
             <div className='table-container'>
                 <Table tableData={incidents} onView={onView} isIncidents={true} onDelete={onDelete}></Table>
             </div>

@@ -1,15 +1,25 @@
-// Get an instance of mysql we can use in the app
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ * 
+ * 
+ * Citation for the following server code:
+ * Date: 7/31/2025
+ * Adapted from Canvas starter code on Activity 2 - Connect webapp to database (Individual).
+ * Source URL: https://canvas.oregonstate.edu/courses/2007765/assignments/10118865?module_item_id=25664551
+ */
+
+// Gets an instance of mysql to be used in the app.
 const mysql = require("mysql2");
 
-// Create a 'connection pool' using the provided credentials
+// Creates a 'connection pool' using the provided credentials.
 const pool = mysql.createPool({
     waitForConnections: true,
     connectionLimit: 10,
     host: 'classmysql.engr.oregonstate.edu',
-    user: 'cs340_jenkibri', // example: cs340_MyOnidIsBilboBaggins
-    password: 'u3z9Ig1eFRbk', // last 4 of your OSU ID number
-    database: 'cs340_jenkibri' // should be same as user
-}).promise(); // This makes it so we can use async / await rather than callbacks
+    user: 'cs340_jenkibri',
+    password: 'u3z9Ig1eFRbk',
+    database: 'cs340_jenkibri'
+}).promise();
 
-// Export it for use in our application
 module.exports = pool;

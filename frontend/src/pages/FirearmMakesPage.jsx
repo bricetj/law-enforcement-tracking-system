@@ -1,6 +1,13 @@
+/*
+ * Brice Jenkins and Andrew Heilesen
+ * Copyright: 2025
+ */
+
+
 import { useEffect, useState } from 'react';
 import Table from '../components/Table';
 import MakeForm from '../components/MakeForm';
+import PopupWindow from '../components/PopupWindow';
 
 /**
  * A React page component to display a table of FirearmMakes.
@@ -10,7 +17,8 @@ import MakeForm from '../components/MakeForm';
 function FirearmMakesPage({backendURL}) {
     const [firearmMakes, setFirearmMakes] = useState([]);
     const [mode, setMode] = useState('create')
-    const [makeToEdit, setMake] = useState()
+    const [makeToEdit, setMake] = useState();
+    const [popupOpen, setPopupOpen] = useState(false);
 
     // Calls the 'GET /firearm-makes' endpoint in the REST API.
     const loadFirearmMakes = async () => {
@@ -35,6 +43,23 @@ function FirearmMakesPage({backendURL}) {
     const onEdit = (make) => {
         setMode('edit')
         setMake(make)
+        setPopupOpen(true);
+    }
+
+    // Handles opening the popup window and clearing the form for new make.
+    const newMakeHandler = () => {
+        setPopupOpen(true);
+        setMake('');
+    }
+
+    // Handles closing the popup window.
+    const onClose = () => {
+        setPopupOpen(false);
+    }
+
+    // Handles saving new information (in development).
+    const onSave = () => {
+        setPopupOpen(false);
     }
 
     // Calls the Delete route handler.
@@ -50,10 +75,26 @@ function FirearmMakesPage({backendURL}) {
     return (
         <>
             <h2>Firearm Makes</h2>
-            <MakeForm mode={mode} makeToEdit={makeToEdit}></MakeForm>
-            <button className='make-model-add-button'>Add Make</button>
+            <button className='add-button' onClick={newMakeHandler}>Add Make</button>
+            <PopupWindow
+                text={'Add a Firearm Make'}
+                isVisible={popupOpen}
+                childElement={
+                    <MakeForm
+                        mode={mode}
+                        makeToEdit={makeToEdit}>
+                    </MakeForm>}
+                noButtonText={'Cancel'}
+                yesButtonText={'Save'}
+                onNo={onClose}
+                onYes={onSave}
+            ></PopupWindow>
             <div className='table-container'>
-                <Table tableData={firearmMakes} onEdit={onEdit} onDelete={onDelete}></Table>
+                <Table
+                    tableData={firearmMakes}
+                    onEdit={onEdit}
+                    onDelete={onDelete}>
+                </Table>
             </div>
         </>
     );
