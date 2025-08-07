@@ -53,7 +53,9 @@ function VehiclesPage( {backendURL, setVehicleToEdit} ) {
         <>
             <h2>Vehicles</h2>
             <Link to='/create-vehicle'><button className='add-button'>Add Vehicle</button></Link>
-            <Table tableData={vehicles} onEdit={onEdit} onDelete={onDelete}></Table>
+            <div className='table-container'>
+                <Table tableData={vehicles} onEdit={onEdit} onDelete={onDelete}></Table>
+            </div>
         </>
     );
 }

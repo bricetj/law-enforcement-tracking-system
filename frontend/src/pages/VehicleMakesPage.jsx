@@ -53,7 +53,9 @@ function VehicleMakesPage({backendURL}) {
             <h2>Vehicle Makes</h2>
             <MakeForm mode={mode} makeToEdit={makeToEdit}></MakeForm>
             <button className='make-model-add-button'>Add Make</button>
-            <Table tableData={vehicleMakes} onEdit={onEdit} onDelete={onDelete}></Table>
+            <div className='table-container'>
+                <Table tableData={vehicleMakes} onEdit={onEdit} onDelete={onDelete}></Table>
+            </div>
         </>
     );
 }

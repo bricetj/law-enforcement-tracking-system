@@ -53,7 +53,9 @@ function VehicleModelsPage({backendURL}) {
             <h2>Vehicle Models</h2>
             <ModelForm mode={mode} modelToEdit={modelToEdit}></ModelForm>
             <button className='make-model-add-button'>Add Model</button>
-            <Table tableData={vehicleModels} onEdit={onEdit} onDelete={onDelete}></Table>
+            <div className='table-container'>
+                <Table tableData={vehicleModels} onEdit={onEdit} onDelete={onDelete}></Table>
+            </div>
         </>
     );
 }

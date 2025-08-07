@@ -54,15 +54,16 @@ app.get('/incidents/:id', async (req, res) => {
                         JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID\
                         JOIN Officers ON Officers.officerID = OfficerIncidents.officerID WHERE Incidents.incidentID = ${incidentID}\
                         AND OfficerIncidents.isCaseOfficer = 1;`;
-        // const query2 = `SELECT Officers.lastName AS 'Affiliated Officers' FROM Officers JOIN OfficerIncidents ON\
-        //                 Officers.officerID = OfficerIncidents.officerID WHERE OfficerIncidents.incidentID = 2 AND\
-        //                 OfficerIncidents.isCaseOfficer = 0;`;
+
+        const query2 = `SELECT Officers.lastName AS 'Affiliated Officers' FROM Officers JOIN OfficerIncidents ON\
+                        Officers.officerID = OfficerIncidents.officerID WHERE OfficerIncidents.incidentID = ${incidentID} AND\
+                        OfficerIncidents.isCaseOfficer = 0;`;
         
         const [incidents] = await db.query(query1);
-        // const [officers] = await db.query(query2);
+        const [officers] = await db.query(query2);
 
         // Send back the results in JSON
-        res.status(200).json(incidents)
+        res.status(200).json([incidents, officers])
 
     } catch (error) {
         console.error("Error executing queries:", error);

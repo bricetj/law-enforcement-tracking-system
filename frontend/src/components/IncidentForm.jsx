@@ -9,7 +9,7 @@ import Table from '../components/Table';
  * @param {object} incidentData An Incidents object.
  * @returns An HTML form with various inputs for Incidents data.
  */
-function IncidentForm ({mode, incidentData, editButtonHandler}) {
+function IncidentForm ({mode, incidentData, otherOfficers, editButtonHandler}) {
     const [incident, setIncidentData] = useState({});
 
     // For use in restricting editing when in 'view' mode.
@@ -21,7 +21,7 @@ function IncidentForm ({mode, incidentData, editButtonHandler}) {
     // Prepopulates fields with incidentData if in 'edit' or 'view' mode.
     useEffect(() => {
         if(mode!=='create' && incidentData) {
-            setIncidentData(incidentData);
+            setIncidentData(incidentData[0]);
         } else {
             setIncidentData({});
         }
@@ -73,17 +73,6 @@ function IncidentForm ({mode, incidentData, editButtonHandler}) {
                             <option value={incident['Last Name'] || ''}>{incident['Last Name'] || ''}</option>
                     </select>
                 </label>
-                <br/>
-                <br/>
-                <label>Narrative:&nbsp;
-                    <textarea className='incident-narrative'
-                        type='text'
-                        name='Narrative'
-                        readOnly = {isReadOnly}
-                        placeholder='Enter your narrative here'
-                        value={incident['Narrative'] || ''}
-                        onChange={onChangeHandler} />
-                </label>
                 &nbsp;&nbsp;
                 <label>Status:&nbsp;
                     <select
@@ -97,6 +86,27 @@ function IncidentForm ({mode, incidentData, editButtonHandler}) {
                             <option value='0'>Inactive</option>
                     </select>
                 </label>
+                <br/>
+                <br/>
+                <div className='narrative-container'>
+                    <label>Narrative:&nbsp;
+                    <textarea className='incident-narrative'
+                        type='text'
+                        name='Narrative'
+                        readOnly = {isReadOnly}
+                        placeholder='Enter your narrative here'
+                        value={incident['Narrative'] || ''}
+                        onChange={onChangeHandler} />
+                    </label>
+                &nbsp;&nbsp;
+                    <div className='small-table-container'>
+                        <label>Affiliated Officers
+                            <Table  tableData={otherOfficers}></Table>
+                        </label>
+                    </div>
+                </div>
+                
+                
                 <br/>
                 <br/>
                 <div className='update-button'>

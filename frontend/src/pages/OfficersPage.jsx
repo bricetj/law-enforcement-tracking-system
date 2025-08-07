@@ -53,7 +53,9 @@ function OfficersPage( {backendURL, setOfficerToEdit} ) {
         <>
             <h2>Officers</h2>
             <Link to='/create-officers'><button className='add-button'>Add Officer</button></Link>
-            <Table tableData={officers} onEdit={onEdit} onDelete={onDelete}></Table>
+            <div className='table-container'>
+                <Table tableData={officers} onEdit={onEdit} onDelete={onDelete}></Table>
+            </div>
         </>
     );
 }

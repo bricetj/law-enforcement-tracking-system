@@ -53,7 +53,9 @@ function FirearmModelsPage({backendURL}) {
             <h2>Firearm Models</h2>
             <ModelForm mode={mode} modelToEdit={modelToEdit}></ModelForm>
             <button className='make-model-add-button'>Add Model</button>
-            <Table tableData={firearmModels} onEdit={onEdit} onDelete={onDelete}></Table>
+            <div className='table-container'>
+                <Table tableData={firearmModels} onEdit={onEdit} onDelete={onDelete}></Table>
+            </div>
         </>
     );
 }

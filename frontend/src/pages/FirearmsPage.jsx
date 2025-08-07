@@ -53,7 +53,9 @@ function FirearmsPage( {backendURL, setFirearmToEdit} ) {
         <>
             <h2>Firearms</h2>
             <Link to='/create-firearm'><button className='add-button'>Add Firearm</button></Link>
-            <Table tableData={firearms} onEdit={onEdit} onDelete={onDelete}></Table>
+            <div className='table-container'>
+                <Table tableData={firearms} onEdit={onEdit} onDelete={onDelete}></Table>
+            </div>
         </>
     );
 }

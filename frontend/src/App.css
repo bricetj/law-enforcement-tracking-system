@@ -100,9 +100,28 @@ p {
     padding: 20px;
 }
 
-table {
+.narrative-container {
+    display: flex; 
+    justify-content: center;
+}
+
+.table-container {
     min-width: 1000px;
     max-width: 1105px;
+    margin: auto;
+}
+
+.small-table-container {
+    min-width: 100px;
+    max-width: 300px;
+}
+
+.small-table-container table thead {
+    display: none;
+}
+
+table {
+    width: 100%;
     border-collapse: collapse;
     box-shadow: 1px 1px 20px 5px rgb(209, 209, 209);
     margin: auto;
@@ -184,7 +203,9 @@ button:focus-visible {
     vertical-align: top;
     white-space: pre-wrap;
     overflow-wrap: break-word;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: inline-block;
+    position: relative;
 }
 
 .column {

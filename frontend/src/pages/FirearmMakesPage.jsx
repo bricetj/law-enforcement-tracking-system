@@ -52,7 +52,9 @@ function FirearmMakesPage({backendURL}) {
             <h2>Firearm Makes</h2>
             <MakeForm mode={mode} makeToEdit={makeToEdit}></MakeForm>
             <button className='make-model-add-button'>Add Make</button>
-            <Table tableData={firearmMakes} onEdit={onEdit} onDelete={onDelete}></Table>
+            <div className='table-container'>
+                <Table tableData={firearmMakes} onEdit={onEdit} onDelete={onDelete}></Table>
+            </div>
         </>
     );
 }

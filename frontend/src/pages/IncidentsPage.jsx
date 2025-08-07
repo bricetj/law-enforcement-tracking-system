@@ -54,7 +54,9 @@ function IncidentsPage( {backendURL, setIncidentToView} ) {
         <>
             <h2>Incidents</h2>
             <Link to='/create-incident'><button className='add-button'>Add Incident</button></Link>
-            <Table tableData={incidents} onView={onView} isIncidents={true} onDelete={onDelete}></Table>
+            <div className='table-container'>
+                <Table tableData={incidents} onView={onView} isIncidents={true} onDelete={onDelete}></Table>
+            </div>
         </>
     );
 }
