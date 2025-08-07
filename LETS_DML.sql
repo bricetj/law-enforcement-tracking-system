@@ -6,7 +6,7 @@
     Class/Section:  CS340 Introduction to Databases
     Assignment:     Project Step 3 - DML
     Date Created:   July 30, 2025
-    Last Modified:  July 31, 2025
+    Last Modified:  August 7, 2025
 
 ******************************************************************************/
 
@@ -82,7 +82,19 @@ FROM FirearmMakes;
 -- Vehicles page within the application. Also contains queries to update Vehicle info.
 --
 
--- Populate Vehicles page
+-- Current query used to populate Vehicles page for standardized ID field
+-- (will likely be replaced by a view).
+SELECT Vehicles.vehicleID AS 'ID', Vehicles.color AS 'Color', Vehicles.year AS 'Year',
+VehicleMakes.make AS 'Make', VehicleModels.model AS 'Model', Vehicles.licensePlate as
+'License Plate', Officers.lastName AS 'Assigned Officer', IF(Vehicles.isActive = 1,
+'Active', 'Inactive') AS 'Active Status'
+FROM Vehicles
+	JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID
+	JOIN VehicleMakes ON VehicleMakes.vehicleMakeID = VehicleModels.vehicleMakeID
+	LEFT JOIN Officers ON Officers.vehicleID = Vehicles.vehicleID
+ORDER BY Vehicles.vehicleID ASC;
+
+-- Populate Vehicles page (eventual view).
 SELECT Vehicles.vehicleID AS 'VIN', Vehicles.color AS 'Color', Vehicles.year AS 'Year',
 VehicleMakes.make AS 'Make', VehicleModels.model AS 'Model', Vehicles.licensePlate as
 'License Plate', Officers.lastName AS 'Assigned Officer', IF(Vehicles.isActive = 1,
@@ -135,7 +147,16 @@ WHERE vehicleID = :vehicle_id_from_dropdown_input;
 -- Incidents page within the application. Also contains queries to update Incident info.
 --
 
--- Populate Incidents page
+-- Current query used to populate Incidents page for standardized ID field
+-- (will likely be replaced by a view).
+SELECT Incidents.incidentID AS 'ID', DATE_FORMAT(Incidents.date, '%Y-%m-%d')
+AS 'Date', Incidents.description AS 'Narrative', Officers.firstName AS 'First Name',
+Officers.lastName AS 'Last Name', IF(Incidents.isActive = 1, 'Active', 'Inactive') AS 'Case Status'
+	JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID
+	JOIN Officers ON OfficerIncidents.officerID = Officers.officerID
+WHERE OfficerIncidents.isCaseOfficer = 1;
+
+-- Populate Incidents page (to be used as a view later).
 SELECT Incidents.incidentID AS 'Incident Number', DATE_FORMAT(Incidents.date, '%Y-%m-%d')
 AS 'Date', Incidents.description AS 'Narrative', Officers.firstName AS 'First Name',
 Officers.lastName AS 'Last Name', IF(Incidents.isActive = 1, 'Active', 'Inactive') AS 'Case Status'
@@ -196,7 +217,15 @@ WHERE incidentID = :incident_id_from_dropdown_Input;
 -- Officers page within the application. Also contains queries to update Officer info.
 --
 
--- Populate Officers page
+-- Current query used to populate Officers page for standardized ID field
+-- (will likely be replaced by a view).
+SELECT officerID AS 'ID', firstName AS 'First Name', middleName AS 'Middle Name',
+lastName AS 'Last Name', ssn AS SSN, DATE_FORMAT(dob, '%Y-%m-%d') AS 'Date of Birth',
+address AS Address, email AS Email, IF(isActive = 1, 'Active', 'Inactive') AS 'Active Status'
+FROM Officers
+ORDER BY officerID ASC;
+
+-- Populate Officers page (will like be the query used in the view).
 SELECT officerID AS 'Badge No.', firstName AS 'First Name', middleName AS 'Middle Name',
 lastName AS 'Last Name', ssn AS SSN, DATE_FORMAT(dob, '%Y-%m-%d') AS 'Date of Birth',
 address AS Address, email AS Email, IF(isActive = 1, 'Active', 'Inactive') AS 'Active Status'
@@ -244,7 +273,18 @@ WHERE officerID = :officer_id_from_dropdown_Input;
 -- Firearms page within the application. Also contains queries to update Firearms info.
 --
 
--- Populate Firearms page
+-- -- Current query used to populate Firearms page for standardized ID field
+-- (will likely be replaced by a view).
+SELECT Firearms.firearmID AS 'ID', Firearms.year AS 'Year', FirearmMakes.make AS
+'Make', FirearmModels.model AS 'Model', Officers.lastName AS 'Assigned Officer',
+IF(Firearms.isActive = 1, 'Active', 'Inactive') AS 'Active Status'
+FROM Firearms
+	JOIN FirearmModels ON Firearms.firearmModelID = FirearmModels.firearmModelID
+	JOIN FirearmMakes ON FirearmMakes.firearmMakeID = FirearmModels.firearmMakeID
+	LEFT JOIN Officers ON Officers.officerID = Firearms.officerID
+ORDER BY Firearms.firearmID ASC;
+
+-- Populate Firearms page (will likely be used as a view).
 SELECT Firearms.firearmID AS 'Serial Number', Firearms.year AS 'Year', FirearmMakes.make AS
 'Make', FirearmModels.model AS 'Model', Officers.lastName AS 'Assigned Officer',
 IF(Firearms.isActive = 1, 'Active', 'Inactive') AS 'Active Status'
