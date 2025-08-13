@@ -3,7 +3,7 @@
  * Copyright: 2025
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Table from '../components/Table';
 import ModelForm from '../components/ModelForm';
 import PopupWindow from '../components/PopupWindow';
@@ -23,8 +23,6 @@ function VehicleModelsPage({backendURL, modelType}) {
 
     // Calls the 'GET /vehicle-models' endpoint in the REST API.
     const loadVehicleModels = async () => {
-        // Skip data if already fetched.
-        if (vehicleModels.length > 0) return;
         try {
             const response = await fetch(backendURL + '/vehicle-models');
             const data = await response.json();
@@ -65,14 +63,14 @@ function VehicleModelsPage({backendURL, modelType}) {
     }
 
     // Calls the Delete route handler.
-    const onDelete = async (id) => {
+    const onDelete = useCallback(async (id) => {
         const response = await fetch(backendURL + `/vehicle-models/${id}`, { method: 'DELETE' });
         if (response.status === 204) {
             setVehicleModels(vehicleModels.filter( e => e['ID'] !== id))
         } else {
             alert(`Vehicle model with id = ${id} is currently used by a child asset; status code = ${response.status}`)
         }
-    }
+    }, [vehicleModels]);
 
     return (
         <>

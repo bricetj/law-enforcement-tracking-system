@@ -197,7 +197,7 @@ app.get('/incidents/:id', async (req, res) => {
 
 
 // Route handler for retrieving affiliated officers by incident ID.
-app.get('/incidents/affiliated-officers/:id', async (req, res) => {
+app.get('/affiliated-officers/:id', async (req, res) => {
     const incidentID = req.params.id;
     try {
         const query1 = `CALL sp_select_other_officers_by_incident_id(${incidentID});`;
@@ -367,6 +367,29 @@ app.put('/incidents/:id', async (req, res) => {
         res.status(500).send("An error occurred while executing the database queries.");
     }
 });
+
+app.put('/affiliated-officers/:id1/:id2', async (req, res) => {
+    const offID = req.params.id1;
+    const incidentID = req.params.id2;
+
+    const officerIncidentData = req.body
+
+    const newOfficerID = officerIncidentData.officerID;
+    const newIncidentID = officerIncidentData.incidentID;
+    const isCaseOfficer = officerIncidentData.isCaseOfficer;
+
+    try {
+        const query1 = `CALL sp_update_officer_incident(${offID}, ${incidentID}, ${newOfficerID}, ${newIncidentID}, ${isCaseOfficer});`;
+
+        const [officerIncident] = await db.query(query1);
+        res.status(200).json(officerIncident);
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
 
 // Route handler for running stored procedure to reset database.
 app.post('/reset-database', async (req, res) => {

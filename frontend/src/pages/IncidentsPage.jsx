@@ -3,7 +3,7 @@
  * Copyright: 2025
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Table from '../components/Table';
 
@@ -21,8 +21,6 @@ function IncidentsPage( {backendURL, setIncidentToView} ) {
 
     // Calls the 'GET /incidents' endpoint in the REST API.
     const loadIncidents = async () => {
-        // Skips data if already fetched.
-        if (incidents.length > 0) return;
         try {
             const response = await fetch(backendURL + '/incidents');
             const data = await response.json();
@@ -46,14 +44,14 @@ function IncidentsPage( {backendURL, setIncidentToView} ) {
     }
 
     // Calls the Delete route handler.
-    const onDelete = async (id) => {
+    const onDelete = useCallback (async (id) => {
         const response = await fetch(backendURL + `/incidents/${id}`, { method: 'DELETE' });
         if (response.status === 204) {
             setIncidents(incidents.filter( e => e['ID'] !== id))
         } else {
             alert(`Failed to delete incident with id = ${id}, status code = ${response.status}`)
         }
-    }
+    }, [incidents])
 
     return (
         <>

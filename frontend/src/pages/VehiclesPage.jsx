@@ -3,7 +3,7 @@
  * Copyright: 2025
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Table from '../components/Table.jsx';
 
@@ -21,7 +21,6 @@ function VehiclesPage( {backendURL, setVehicleToEdit} ) {
 
     // Calls the 'GET /vehicles' endpoint in the REST API.
     const loadVehicles = async () => {
-        if (vehicles.length > 0) return; // Skip data if already fetched
         try {
             const response = await fetch(backendURL + '/vehicles');
             const data = await response.json();
@@ -56,14 +55,14 @@ function VehiclesPage( {backendURL, setVehicleToEdit} ) {
     }
 
     // Calls the Delete route handler.
-    const onDelete = async (id) => {
+    const onDelete = useCallback(async (id) => {
         const response = await fetch(backendURL + `/vehicles/${id}`, { method: 'DELETE' });
         if (response.status === 204) {
             setVehicles(vehicles.filter( e => e['ID'] !== id))
         } else {
             alert(`Failed to delete vehicle with id = ${id}, status code = ${response.status}`)
         }
-    }
+    }, [vehicles]);
 
     return (
         <>

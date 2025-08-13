@@ -307,3 +307,7 @@ button:focus-visible {
 .popup-button {
     margin: 20px;
 }
+
+.edit-incident-button {
+    margin: 40px;
+}

@@ -3,7 +3,7 @@
  * Copyright: 2025
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Table from '../components/Table';
 
@@ -21,7 +21,6 @@ function OfficersPage( {backendURL, setOfficerToEdit} ) {
 
     // Calls the 'GET /officers' endpoint in the REST API.
     const loadOfficers = async () => {
-        if (officers.length > 0) return; // Skip data if already fetched
         try {
             const response = await fetch(backendURL + '/officers');
             const data = await response.json();
@@ -54,14 +53,14 @@ function OfficersPage( {backendURL, setOfficerToEdit} ) {
     }
 
     // Calls the Delete route handler.
-    const onDelete = async (id) => {
+    const onDelete = useCallback(async (id) => {
         const response = await fetch(backendURL + `/officers/${id}`, { method: 'DELETE' });
         if (response.status === 204) {
             setOfficers(officers.filter( e => e['ID'] !== id))
         } else {
             alert(`Failed to delete officer with id = ${id}, status code = ${response.status}`)
         }
-    }
+    }, [officers]);
 
     return (
         <>

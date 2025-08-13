@@ -4,7 +4,7 @@
  */
 
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Table from '../components/Table';
 import MakeForm from '../components/MakeForm';
 import PopupWindow from '../components/PopupWindow';
@@ -22,8 +22,6 @@ function FirearmMakesPage({backendURL}) {
 
     // Calls the 'GET /firearm-makes' endpoint in the REST API.
     const loadFirearmMakes = async () => {
-        // Skips data if already fetched.
-        if (firearmMakes.length > 0) return;
         try {
             const response = await fetch(backendURL + '/firearm-makes');
             const data = await response.json();
@@ -63,14 +61,14 @@ function FirearmMakesPage({backendURL}) {
     }
 
     // Calls the Delete route handler.
-    const onDelete = async (id) => {
+    const onDelete = useCallback(async (id) => {
         const response = await fetch(backendURL + `/firearm-makes/${id}`, { method: 'DELETE' });
         if (response.status === 204) {
             setFirearmMakes(firearmMakes.filter( e => e['ID'] !== id))
         } else {
             alert(`Firearm make with id = ${id} is currently used by a child asset; status code = ${response.status}`)
         }
-    }
+    }, [firearmMakes])
 
     return (
         <>

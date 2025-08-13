@@ -7,8 +7,7 @@ import { useEffect, useState, useCallback } from 'react';
 import Table from '../components/Table';
 import Dropdown from '../components/Dropdown';
 import PopupWindow from './PopupWindow';
-import {useNavigate} from 'react-router-dom';
-import { PiCoinsBold } from 'react-icons/pi';
+import {useNavigate, Link} from 'react-router-dom';
 
 /**
  * Creates an HTML form that can be used for both editing and creating
@@ -26,7 +25,10 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
     const [incident, setIncidentData] = useState({});
     const [otherOfficersTable, setOtherOfficersTable] = useState();
     const [popupOpen, setPopupOpen] = useState(false);
+    const [popupValue, setPopupValue] = useState();
+    const [popupTitle, setPopupTitle] = useState('Add');
     const [otherOfficer, setOtherOfficer] = useState({});
+    const [previousOfficer, setPreviousOfficer] = useState({});
     const navigate = useNavigate();
 
     // For use in restricting editing when in 'view' mode.
@@ -61,9 +63,9 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         );
         if(response.status === 201){
             alert('The affiliated officer was successfully added.');
-            // Calls the /incidents/affiliated-officers/:id route handler.
+            // Calls the /affiliated-officers/:id route handler.
             try {
-                const response = await fetch(backendURL + `/incidents/affiliated-officers/${incident['id']}`);
+                const response = await fetch(backendURL + `/affiliated-officers/${incident['id']}`);
                 const data = await response.json();
                 setOtherOfficersTable(data);
             } catch (error) {
@@ -90,7 +92,6 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
             } else {
                 alert('Failed to create incident record, status code = ' + response.status);
             };
-            navigate('/incidents')
     };
 
      // Calls the 'PUT /incidents/:id' endpoint in the REST API.
@@ -108,16 +109,62 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         } else {
             alert('Failed to edit incident record, status code = ' + response.status)
         }
-        navigate('/incidents')
-    }, [incident]);
+        navigate('/incidents');
+    }, [otherOfficer, incident]);
 
+    
+    // const loadAffiliatedOfficer = async () => {
+    //     try {
+    //         const response = await fetch(backendURL + `/affiliated-officers/${incident['id']}`);
+    //         const data = await response.json();
+    //         setOtherOfficersTable(data);
+    //     } catch (error) {
+    //         console.log(error);
+    //     };
+    // }
+
+    // useEffect( () => {
+    //     loadAffiliatedOfficer();
+    // }, []);
+
+
+     // Calls the 'PUT /incidents/:id' endpoint in the REST API.
+    const updateAffiliatedOfficer = useCallback(async (oldOfficerID) => {
+        const response = await fetch(backendURL + `/affiliated-officers/${oldOfficerID}/${incident.id}`, {
+                    method: 'PUT',
+                    headers: {'Content-type': 'application/json'},
+                    body: JSON.stringify({'officerID': otherOfficer, 'incidentID': incident.id, 'isCaseOfficer': 0})
+                }
+        );
+
+        // User is alerted if incident is successfully updated and redirects back to incidents.
+        if(response.status === 200){
+            alert('The affiliated officer was successfully updated!');
+            try {
+                const response = await fetch(backendURL + `/affiliated-officers/${incident['id']}`);
+                const data = await response.json();
+                setOtherOfficersTable(data);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            alert('Failed to update affiliated officer, status code = ' + response.status)
+        }
+    }, [otherOfficer, incident]);
+
+    const onEdit = (officerID) => {
+        setPopupValue(officerID);
+        setPreviousOfficer(officerID);
+        setPopupTitle('Edit');
+        setPopupOpen(true);
+    }
 
     // Calls the Delete route handler.
     const onDelete = async (id) => {
         const response = await fetch(backendURL + `/incidents/officers/${id}/${incident['id']}`, { method: 'DELETE' });
         if (response.status === 204) {
             try {
-                const response = await fetch(backendURL + `/incidents/affiliated-officers/${incident['id']}`);
+                const response = await fetch(backendURL + `/affiliated-officers/${incident['id']}`);
                 const data = await response.json();
                 setOtherOfficersTable(data);
             } catch (error) {
@@ -148,14 +195,22 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         editButtonHandler();
     }
 
-    // Handles opening the popup window.
-    const openPopupHandler = (f) => {
+    // // Handles opening the popup window.
+    // const openPopupHandler = (f) => {
+    //     setPopupOpen(true);
+    // }
+
+      const addLinkHandler = () => {
+        setPopupTitle('Add');
+        setPopupValue();
         setPopupOpen(true);
     }
+
 
     // Handles changes in selection from the Affiliated officers popup.
     const onPopupChangeHandler = (f) => {
         const {value} = f.target;
+        setPopupValue(value);
         setOtherOfficer(value);
     }
 
@@ -167,7 +222,11 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
     // Handles saving an affiliated officer selection.
     const onSave = (officerID) => {
         setOtherOfficer(officerID);
-        createAffiliatedOfficer();
+        if (popupTitle == 'Add') {
+            createAffiliatedOfficer();
+        } else {
+            updateAffiliatedOfficer(previousOfficer);
+        }
         setPopupOpen(false);
     }
 
@@ -243,15 +302,14 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
                     <div className='small-table-container'>
                         <label>Affiliated Officers
                             <Table
-                                isIncidents='true'
-                                isAffiliatedOfficers='true'
                                 tableData={otherOfficersTable}
+                                onEdit={onEdit}
                                 onDelete={onDelete}>
                             </Table>
                         </label>
-                        {mode == 'edit' && <a href='#' onClick={openPopupHandler}>+ Add an Officer</a>}
+                        {mode == 'edit' && <a href='#' onClick={addLinkHandler}>+ Add an Officer</a>}
                         <PopupWindow 
-                            text={'Add an Affiliated Officer'}
+                            text={`${popupTitle} an Affiliated Officer`}
                             isVisible={popupOpen}
                             childElement={
                                 <Dropdown
@@ -260,6 +318,7 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
                                     colName='officerID'
                                     displayName1='First Name'
                                     displayName2='Last Name'
+                                    selectedVal={popupValue || ''}
                                     onChangeHandler={onPopupChangeHandler}>
                                 </Dropdown>
                             }
@@ -272,12 +331,16 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
                     </div>}
                 </div>
                 <br/>
-                <br/>
-                <div className='update-button'>
-                    {mode != 'view' &&
-                    <button type='submit'>Save</button>}
-                </div>
-            </fieldset>
+                <br/> 
+                {mode != 'view' &&
+                <div>
+                    <Link to='/incidents'><button 
+                        className='edit-incident-buttons'
+                        >Cancel</button>
+                    </Link>
+                    <button className='edit-incident-button' type='submit'>Save</button>   
+                </div>}
+                </fieldset>
             </form>
         </div>
     );

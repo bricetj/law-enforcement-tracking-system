@@ -3,7 +3,7 @@
  * Copyright: 2025
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Table from '../components/Table';
 import ModelForm from '../components/ModelForm';
 import PopupWindow from '../components/PopupWindow';
@@ -23,8 +23,6 @@ function FirearmModelsPage({backendURL, modelType}) {
 
     // Calls the 'GET /firearm-models' endpoint in the REST API.
     const loadFirearmModels = async () => {
-        // Skips data if already fetched.
-        if (firearmModels.length > 0) return;
         try {
             const response = await fetch(backendURL + '/firearm-models');
             const data = await response.json();
@@ -65,14 +63,14 @@ function FirearmModelsPage({backendURL, modelType}) {
     }
 
     // Calls the Delete route handler.
-    const onDelete = async (id) => {
+    const onDelete = useCallback(async (id) => {
         const response = await fetch(backendURL + `/firearm-models/${id}`, { method: 'DELETE' });
         if (response.status === 204) {
             setFirearmModels(firearmModels.filter( e => e['ID'] !== id))
         } else {
             alert(`Firearm model with id = ${id} is currently used by a child asset; status code = ${response.status}`)
         }
-    }
+    }, [firearmModels])
 
     return (
         <>

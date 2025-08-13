@@ -25,7 +25,7 @@ const TableRow = ({ isIncidents, isAffiliatedOfficers, rowObject, onEdit, onView
 
     return (
         <tr>
-            {isIncidents && !isAffiliatedOfficers &&
+            {isIncidents &&
                 <td className='table-icon'>
                     <Tooltip
                         text='View'

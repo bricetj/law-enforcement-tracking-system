@@ -3,7 +3,7 @@
  * Copyright: 2025
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Table from '../components/Table';
 
@@ -21,8 +21,6 @@ function FirearmsPage( {backendURL, setFirearmToEdit} ) {
 
     // Calls the 'GET /firearms' endpoint in the REST API.
     const loadFirearms = async () => {
-        // Skips data if already fetched.
-        if (firearms.length > 0) return;
         try {
             const response = await fetch(backendURL + '/firearms');
             const data = await response.json();
@@ -45,14 +43,14 @@ function FirearmsPage( {backendURL, setFirearmToEdit} ) {
     }
 
     // Calls the Delete route handler.
-    const onDelete = async (id) => {
+    const onDelete = useCallback(async (id) => {
         const response = await fetch(backendURL + `/firearms/${id}`, { method: 'DELETE' });
         if (response.status === 204) {
             setFirearms(firearms.filter( e => e['ID'] !== id))
         } else {
             alert(`Failed to delete firearm with id = ${id}, status code = ${response.status}`)
         }
-    }
+    }, [firearms])
 
     return (
         <>

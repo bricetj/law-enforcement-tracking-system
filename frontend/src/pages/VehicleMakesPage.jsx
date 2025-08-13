@@ -3,7 +3,7 @@
  * Copyright: 2025
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Table from '../components/Table';
 import MakeForm from '../components/MakeForm';
 import PopupWindow from '../components/PopupWindow';
@@ -21,8 +21,6 @@ function VehicleMakesPage({backendURL}) {
 
     // Calls the 'GET /vehicle-makes' endpoint in the REST API.
     const loadVehicleMakes = async () => {
-        // Skip data if already fetched.
-        if (vehicleMakes.length > 0) return;
         try {
             const response = await fetch(backendURL + '/vehicle-makes');
             const data = await response.json();
@@ -63,14 +61,14 @@ function VehicleMakesPage({backendURL}) {
     }
 
     // Calls the Delete route handler.
-    const onDelete = async (id) => {
+    const onDelete = useCallback(async (id) => {
         const response = await fetch(backendURL + `/vehicle-makes/${id}`, { method: 'DELETE' });
         if (response.status === 204) {
             setVehicleMakes(vehicleMakes.filter( e => e['ID'] !== id))
         } else {
             alert(`Vehicle make with id = ${id} is currently used by a child asset; status code = ${response.status}`)
         }
-    }
+    }, [vehicleMakes])
 
     return (
         <>

@@ -576,6 +576,45 @@ BEGIN
 
 END //
 DELIMITER ;
+
+
+--
+-- Creates a stored procedure to update an OfficerIncident record.
+--
+DROP PROCEDURE IF EXISTS sp_update_officer_incident;
+DELIMITER //
+CREATE PROCEDURE sp_update_officer_incident(
+    IN officerIDInput INT,
+    IN incidentIDInput INT,
+    IN officerIDNew INT,
+    IN incidentIDNew INT,
+    IN isCaseOfficerNew TINYINT(1)
+)
+BEGIN
+
+    DECLARE row_updated INT;
+    UPDATE OfficerIncidents
+    SET officerID = officerIDNew,
+        incidentID = incidentIDNew,
+        isCaseOfficer = isCaseOfficerNew
+    WHERE officerID  = officerIDInput AND incidentID = incidentIDInput;
+
+    -- Get the number of rows affected by the UPDATE and checks if it was successful.
+    SELECT ROW_COUNT() INTO row_updated;
+    IF row_updated > 0 THEN
+        -- Returns a single combined success message.
+        SELECT 'OfficerIncident record successfully updated.' AS message;
+    ELSE
+        -- Or returns an error message.
+        SELECT 'There was an error updating the OfficerIncident record.' AS message;
+    END IF;
+
+
+END //
+DELIMITER ;
+
+
+
 /******************************************
  *
  * Stored Procedures for DELETE Operations

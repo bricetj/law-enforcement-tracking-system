@@ -26,8 +26,6 @@ function IncidentViewPage( {pageTitle, mode, backendURL, incidentToView} ) {
 
     // Calls the 'GET /incidents/:id' endpoint in the REST API.
     const loadIncident = async () => {
-        // Skips data if already fetched.
-        if (incident.length > 0) return;
         try {
             const response = await fetch(backendURL + `/incidents/${incidentToView['ID']}`);
             const data = await response.json();
