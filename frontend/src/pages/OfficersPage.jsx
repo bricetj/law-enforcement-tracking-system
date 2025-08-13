@@ -31,16 +31,25 @@ function OfficersPage( {backendURL, setOfficerToEdit} ) {
         }
     };
     
-    // Cannot pass an async function to useEffect; however, the anonymous
-    // function passed can call loadOfficers().
     useEffect( () => {
         loadOfficers();
     }, []);
 
-    // Will be used to capture a particular officer row to pre-populate
+    // Calls the 'GET /officers/:id' endpoint in the REST API.
+    const loadOfficerByID = async (id) => {
+        try {
+            const responseOfficer = await fetch(backendURL + `/officers/${id}`);
+            const dataOfficer = await responseOfficer.json();
+            setOfficerToEdit(dataOfficer[0][0]);
+        } catch (error) {
+            console.log (error)
+        }
+    };
+
+    // Will be used to retrieve a particular officer row to pre-populate
     // editing form on CreateOrEditOfficerPage and redirect to that page.
-    const onEdit = (officer) => {
-        setOfficerToEdit(officer)
+    const onEdit = (officerID) => {
+        loadOfficerByID(officerID);
         navigate('/edit-officers')
     }
 

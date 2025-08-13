@@ -54,8 +54,8 @@ function App() {
           <Route path='/incidents' element={<IncidentsPage backendURL={backendURL} setIncidentToView={setIncidentToView}/>}></Route>
           <Route path='/vehicles' element={<VehiclesPage backendURL={backendURL} setVehicleToEdit={setVehicleToEdit}/>}></Route>
           <Route path='/firearms' element={<FirearmsPage backendURL={backendURL} setFirearmToEdit={setFirearmToEdit}/>}></Route>
-          <Route path='/create-officers' element={<CreateOrEditOfficerPage mode={'create'} title={'Add Officer'}/>}></Route>
-          <Route path='/edit-officers' element={<CreateOrEditOfficerPage mode={'edit'} title={'Edit Officer'} officerToEdit={officerToEdit}/>}></Route>
+          <Route path='/create-officers' element={<CreateOrEditOfficerPage backendURL={backendURL} mode={'create'} title={'Add Officer'}/>}></Route>
+          <Route path='/edit-officers' element={<CreateOrEditOfficerPage backendURL={backendURL} mode={'edit'} title={'Edit Officer'} officerToEdit={officerToEdit}/>}></Route>
           <Route path='/create-incident' element={<IncidentViewPage pageTitle={'Create Incident'} mode={'create'} backendURL={backendURL}/>}></Route>
           <Route path='/view-incident' element={<IncidentViewPage pageTitle={'View Incident'} mode={'view'} backendURL={backendURL} incidentToView={incidentToView}/>}></Route>
           <Route path='/edit-incident' element={<IncidentViewPage mode={'edit'} backendURL={backendURL} incidentToView={incidentToView}/>}></Route>

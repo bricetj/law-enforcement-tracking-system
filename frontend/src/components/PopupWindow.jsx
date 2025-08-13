@@ -23,7 +23,7 @@
  * @returns An HTML div element with a message, additional elements (if applicable),
  * and two buttons.
  */
-function PopupWindow ({text, childElement, isVisible, noButtonText, yesButtonText, onNo, onYes}){
+function PopupWindow ({text, childElement, isVisible, noButtonText, yesButtonText, onNo, onYes, itemToSubmit}){
     // Hides the popup when not activated.
     if (!isVisible) {
         return null;
@@ -35,7 +35,10 @@ function PopupWindow ({text, childElement, isVisible, noButtonText, yesButtonTex
                     <p className='popup-text'>{text}</p>
                     <div>{childElement}</div>
                     <button className='popup-button' onClick={onNo}>{noButtonText}</button>
-                    <button className='popup-button' onClick={onYes}>{yesButtonText}</button>
+                    <button className='popup-button' onClick={e => {
+                                                            e.preventDefault();
+                                                            onYes(itemToSubmit)}}
+                    >{yesButtonText}</button>
                 </div>
             </div>
     );

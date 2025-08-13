@@ -37,10 +37,21 @@ function VehiclesPage( {backendURL, setVehicleToEdit} ) {
         loadVehicles();
     }, []);
 
+    // Calls the 'GET /vehicles/:id' endpoint in the REST API.
+    const loadVehicleByID = async (id) => {
+        try {
+            const responseVehicle = await fetch(backendURL + `/vehicles/${id}`);
+            const dataVehicle = await responseVehicle.json();
+            setVehicleToEdit(dataVehicle[0][0]);
+        } catch (error) {
+            console.log (error)
+        }
+    };
+
     // Will be used to capture a particular vehicle row to pre-populate
     // editing form on CreateOrEditVehiclePage and redirect to that page.
-    const onEdit = (vehicle) => {
-        setVehicleToEdit(vehicle)
+    const onEdit = (vehicleID) => {
+        loadVehicleByID(vehicleID);
         navigate('/edit-vehicle')
     }
 

@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from 'react';
 import Dropdown from '../components/Dropdown';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Creates an HTML form that can be used for both editing and creating
@@ -16,8 +17,46 @@ import Dropdown from '../components/Dropdown';
  * @param {object} vehicleToEdit A Vehicles object.
  * @returns An HTML form with various inputs for Vehicles data.
  */
-function VehicleForm ({mode, backendURL, vehicleToEdit}) {
+function VehicleForm ({backendURL, mode, vehicleToEdit}) {
     const [vehicleData, setVehicleData] = useState({});
+    const navigate = useNavigate();
+
+    // Calls the 'POST /vehicles' endpoint in the REST API.
+    const createVehicle = async () => {
+        const response = await fetch(backendURL + '/vehicles', 
+                {
+                    method: 'POST',
+                    headers: {'Content-type': 'application/json'},
+                    body: JSON.stringify(vehicleData)
+                }
+        );
+        // User is alerted if officer is successfully created and then is
+        // redirected back to the page.
+        if(response.status === 201){
+                alert('The vehicle record was successfully created.');
+            } else {
+                alert('Failed to create vehicle record, status code = ' + response.status);
+            };
+        navigate('/vehicles')
+    };
+
+     // Calls the 'PUT /vehicles/:id' endpoint in the REST API.
+    const updateVehicle = async () => {
+        const response = await fetch(backendURL + `/vehicles/${vehicleToEdit['id']}`, {
+                    method: 'PUT',
+                    headers: {'Content-type': 'application/json'},
+                    body: JSON.stringify(vehicleData)
+                }
+        );
+        // User is alerted if officer is successfully updated and page reloads.
+        if(response.status === 200){
+                alert('Successfully edited the vehicle record.');
+            } else {
+                alert('Failed to edit vehicle record, status code = ' + response.status)
+            }
+            navigate('/vehicles');
+    };
+
     
     // Sets form data to particular Vehicle if the form is in 'edit' mode.
     useEffect(() => {
@@ -37,26 +76,37 @@ function VehicleForm ({mode, backendURL, vehicleToEdit}) {
         }));
     }
 
+    // Handles submission of the form based on edit or create mode.
+    const submitHandler = (event) => {
+        event.preventDefault()
+        if(mode === 'edit') {
+            updateVehicle();
+        } else if (mode === 'create') {
+            createVehicle();
+        }
+    }
+
     return (
-        <div className='vehicle-form'>
+        <div>
+            <form className='vehicle-form' onSubmit={submitHandler}>
             <fieldset>
                 <label>VIN:&nbsp;
                     <input
                         type='text'
-                        name='VIN'
+                        name='id'
                         required='required'
                         placeholder='Enter VIN here'
-                        value={vehicleData['ID'] || ''}
+                        value={vehicleData['id'] || ''}
                         onChange={onChangeHandler} />
                 </label>
                 &nbsp;&nbsp;
                 <label>Color:&nbsp;
                     <select
                         type='text'
-                        name='Color'
+                        name='color'
                         required='required'
                         placeholder='Select vehicle color'
-                        value={vehicleData['Color'] || ''}
+                        value={vehicleData['color'] || ''}
                         onChange={onChangeHandler}>
                             <option value='' disabled>Select Color</option>
                             <option value='Black'>Black</option>
@@ -77,72 +127,71 @@ function VehicleForm ({mode, backendURL, vehicleToEdit}) {
                 <label>Year:&nbsp;
                     <input
                         type='number'
-                        name='Year'
+                        name='year'
                         required='required'
                         placeholder='Enter year here'
-                        value={vehicleData['Year'] || ''}
+                        value={vehicleData['year'] || ''}
                         onChange={onChangeHandler} />
                 </label>
                 <br/>
                 <br/>
-                <label>Make:&nbsp;
-                    <Dropdown
-                        backendURL={backendURL}
-                        routePath={'/vehicle-makes'}
-                        colName='Make'
-                        isRequired='required'
-                        selectedVal={vehicleData['Make'] || ''}>
-                    </Dropdown>
-                </label>
                 &nbsp;&nbsp;
                 <label>Model:&nbsp;
                     <Dropdown
                         backendURL={backendURL}
                         routePath={`/vehicle-models`}
-                        colName='Model'
+                        colName='modelID'
+                        displayName1={'Make'}
+                        displayName2={'Model'}
                         isRequired='required'
-                        selectedVal={vehicleData['Model'] || ''}>
+                        selectedVal={vehicleData['modelID'] || ''}
+                        onChangeHandler={onChangeHandler}>
                     </Dropdown>
                 </label>
                 &nbsp;&nbsp;
                 <label>License Plate:&nbsp;
                     <input
                         type='text'
-                        name='License Plate'
+                        name='licensePlate'
                         required='required'
                         placeholder='Enter License Plate here'
-                        value={vehicleData['License Plate'] || ''}
-                        onChange={onChangeHandler} />
+                        value={vehicleData['licensePlate'] || ''}
+                        onChange={onChangeHandler}/>
                 </label>
                 <br/>
                 <br/>
+                {mode == 'edit' &&
                 <label>Assigned Officer:&nbsp;
                     <Dropdown
                         backendURL={backendURL}
                         routePath={'/officers'}
-                        colName='Last Name'
+                        colName='officerID'
+                        displayName1='First Name'
+                        displayName2='Last Name'
                         isRequired='required'
-                        selectedVal={vehicleData['Assigned Officer'] || ''}>
+                        selectedVal={vehicleData['officerID'] || ''}
+                        onChange={onChangeHandler}>
                     </Dropdown>
-                </label>
+                </label>}
                 &nbsp;&nbsp;
                 <label>Status:&nbsp;
                     <select
                         type='text'
-                        name='Active Status'
+                        name='isActive'
                         required='required'
-                        value={vehicleData['Active Status'] || ''}
+                        value={vehicleData['isActive'] || ''}
                         onChange={onChangeHandler}>
-                            <option value='1'>Active</option> 
                             <option value='0'>Inactive</option>
+                            <option value='1'>Active</option> 
                     </select>
                 </label>
                 <br/>
                 <br/>
                 <div className='update-button'>
-                    <button>Save</button>
+                    <button type='submit'>Save</button>
                 </div>
             </fieldset>
+            </form>
         </div>
     );
 }

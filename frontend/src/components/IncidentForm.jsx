@@ -3,10 +3,12 @@
  * Copyright: 2025
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Table from '../components/Table';
 import Dropdown from '../components/Dropdown';
 import PopupWindow from './PopupWindow';
+import {useNavigate} from 'react-router-dom';
+import { PiCoinsBold } from 'react-icons/pi';
 
 /**
  * Creates an HTML form that can be used for both editing and creating
@@ -22,14 +24,17 @@ import PopupWindow from './PopupWindow';
  */
 function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButtonHandler}) {
     const [incident, setIncidentData] = useState({});
+    const [otherOfficersTable, setOtherOfficersTable] = useState();
     const [popupOpen, setPopupOpen] = useState(false);
+    const [otherOfficer, setOtherOfficer] = useState({});
+    const navigate = useNavigate();
 
     // For use in restricting editing when in 'view' mode.
     let isReadOnly = true;
     if (mode !== 'view') {
         isReadOnly = false;
     }
-    
+
     // Prepopulates fields with incidentData if in 'edit' or 'view' mode.
     useEffect(() => {
         if(mode!=='create' && incidentData) {
@@ -37,7 +42,91 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         } else {
             setIncidentData({});
         }
-    }, [mode, incidentData]);
+    }, [mode, incidentData]);   
+
+    // Prefills affiliated officer table with data.
+    useEffect(() => {
+        setOtherOfficersTable(otherOfficers);
+    }, [otherOfficers])
+
+    // Used to create a new affiliated officer and then wait for response to 
+    // update table.
+    const createAffiliatedOfficer = useCallback(async () => {
+        const response = await fetch(backendURL + '/affiliated-officers', 
+            {
+                method: 'POST',
+                headers: {'Content-type': 'application/json'},
+                body: JSON.stringify({'officerID': otherOfficer, 'incidentID': incident.id, 'isCaseOfficer': 0})
+            }
+        );
+        if(response.status === 201){
+            alert('The affiliated officer was successfully added.');
+            // Calls the /incidents/affiliated-officers/:id route handler.
+            try {
+                const response = await fetch(backendURL + `/incidents/affiliated-officers/${incident['id']}`);
+                const data = await response.json();
+                setOtherOfficersTable(data);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            alert('Failed to add affiliated officer, status code = ' + response.status);
+        };
+    }, [otherOfficer, incident])
+
+    // Calls the 'POST /incidents' endpoint in the REST API.
+    const createIncident = async () => {
+        const response = await fetch(backendURL + '/incidents', 
+                {
+                    method: 'POST',
+                    headers: {'Content-type': 'application/json'},
+                    body: JSON.stringify(incident)
+                }
+        );
+        // User is alerted if incident is successfully created and then is
+        // redirected back to the incidents page.
+        if(response.status === 201){
+                alert('The incident record was successfully created.');
+            } else {
+                alert('Failed to create incident record, status code = ' + response.status);
+            };
+            navigate('/incidents')
+    };
+
+     // Calls the 'PUT /incidents/:id' endpoint in the REST API.
+    const updateIncident = useCallback(async () => {
+        const response = await fetch(backendURL + `/incidents/${incident['id']}`, {
+                    method: 'PUT',
+                    headers: {'Content-type': 'application/json'},
+                    body: JSON.stringify(incident)
+                }
+        );
+
+        // User is alerted if incident is successfully updated and redirects back to incidents.
+        if(response.status === 200){
+            alert('Incident successfully updated!');
+        } else {
+            alert('Failed to edit incident record, status code = ' + response.status)
+        }
+        navigate('/incidents')
+    }, [incident]);
+
+
+    // Calls the Delete route handler.
+    const onDelete = async (id) => {
+        const response = await fetch(backendURL + `/incidents/officers/${id}/${incident['id']}`, { method: 'DELETE' });
+        if (response.status === 204) {
+            try {
+                const response = await fetch(backendURL + `/incidents/affiliated-officers/${incident['id']}`);
+                const data = await response.json();
+                setOtherOfficersTable(data);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            alert(`Failed to delete affiliated officer, status code = ${response.status}`)
+        }
+    }
 
     // Handles changes to form fields when in editing mode.
     const onChangeHandler = (f) => {
@@ -48,9 +137,26 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         }));
     }
 
+     // Handles submission of the form based on edit or create mode.
+    const submitHandler = (event) => {
+        event.preventDefault()
+        if(mode === 'edit') {
+            updateIncident();
+        } else if (mode === 'create') {
+            createIncident();
+        }
+        editButtonHandler();
+    }
+
     // Handles opening the popup window.
-    const openPopupHandler = () => {
+    const openPopupHandler = (f) => {
         setPopupOpen(true);
+    }
+
+    // Handles changes in selection from the Affiliated officers popup.
+    const onPopupChangeHandler = (f) => {
+        const {value} = f.target;
+        setOtherOfficer(value);
     }
 
     // Handles closing the popup window.
@@ -58,13 +164,17 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         setPopupOpen(false);
     }
 
-    const onSave = () => {
+    // Handles saving an affiliated officer selection.
+    const onSave = (officerID) => {
+        setOtherOfficer(officerID);
+        createAffiliatedOfficer();
         setPopupOpen(false);
     }
 
 
     return (
-        <div className='incident-form'>
+        <div>
+            <form className='incident-form' onSubmit={submitHandler}>
             <fieldset>
                 {mode!='create' &&
                     <label>Incident Number:&nbsp;
@@ -72,7 +182,7 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
                             type='number'
                             readOnly
                             required='required'
-                            value={incident['ID'] || ''}/>
+                            value={incident['id'] || ''}/>
                     </label>
                 }
                 &nbsp;&nbsp;
@@ -80,11 +190,11 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
                     <input
                         className='date-picker'
                         type='date'
-                        name='Date'
+                        name='date'
                         readOnly = {isReadOnly}
                         required='required'
                         placeholder='mm-dd-yyyy'
-                        value={incident['Date'] || ''}
+                        value={incident['date'] || ''}
                         onChange={onChangeHandler} />
                 </label>
                 &nbsp;&nbsp;
@@ -92,23 +202,26 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
                     <Dropdown
                         backendURL={backendURL}
                         routePath={'/officers'}
-                        colName='Last Name'
+                        colName='officerID'
+                        displayName1='First Name'
+                        displayName2='Last Name'
                         isReadOnly={isReadOnly}
                         isRequired='required'
-                        selectedVal={incident['Last Name'] || ''}>
+                        selectedVal={incident['officerID'] || ''}
+                        onChangeHandler={onChangeHandler}>
                     </Dropdown>
                 </label>
                 &nbsp;&nbsp;
                 <label>Status:&nbsp;
                     <select
                         type='text'
-                        name='Active Status'
+                        name='isActive'
                         disabled = {isReadOnly}
                         required='required'
-                        value={incident['Active Status'] || ''}
+                        value={incident['isActive'] || ''}
                         onChange={onChangeHandler}>
-                            <option value='1'>Active</option> 
                             <option value='0'>Inactive</option>
+                            <option value='1'>Active</option> 
                     </select>
                 </label>
                 <br/>
@@ -117,18 +230,26 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
                     <label>Narrative:<br/>
                         <textarea className='incident-narrative'
                             type='text'
-                            name='Narrative'
+                            name='description'
                             readOnly = {isReadOnly}
                             placeholder='Enter your narrative here'
-                            value={incident['Narrative'] || ''}
+                            value={incident['description'] || ''}
                             onChange={onChangeHandler} />
                     </label>
                 &nbsp;&nbsp;
+                    {mode == 'create' &&
+                    <p>Save your incident to add<br/> additional affiliated officers.</p>}
+                    {mode != 'create' &&
                     <div className='small-table-container'>
                         <label>Affiliated Officers
-                            <Table  tableData={otherOfficers}></Table>
+                            <Table
+                                isIncidents='true'
+                                isAffiliatedOfficers='true'
+                                tableData={otherOfficersTable}
+                                onDelete={onDelete}>
+                            </Table>
                         </label>
-                        <a href='#' onClick={openPopupHandler}>+ Add an Officer</a>
+                        {mode == 'edit' && <a href='#' onClick={openPopupHandler}>+ Add an Officer</a>}
                         <PopupWindow 
                             text={'Add an Affiliated Officer'}
                             isVisible={popupOpen}
@@ -136,27 +257,28 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
                                 <Dropdown
                                     backendURL={backendURL}
                                     routePath={'/officers'}
-                                    colName='Last Name'>
+                                    colName='officerID'
+                                    displayName1='First Name'
+                                    displayName2='Last Name'
+                                    onChangeHandler={onPopupChangeHandler}>
                                 </Dropdown>
                             }
                             noButtonText={'Cancel'}
                             yesButtonText={'Save'}
                             onNo={onClose}
                             onYes={onSave}
+                            itemToSubmit={otherOfficer}
                         ></PopupWindow>
-                    </div>
+                    </div>}
                 </div>
                 <br/>
                 <br/>
                 <div className='update-button'>
                     {mode != 'view' &&
-                    <button 
-                        onClick = {e => {
-                            e.preventDefault();
-                            editButtonHandler()}}>Save
-                    </button>}
+                    <button type='submit'>Save</button>}
                 </div>
             </fieldset>
+            </form>
         </div>
     );
 }

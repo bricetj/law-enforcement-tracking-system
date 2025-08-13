@@ -44,7 +44,8 @@ function ModelForm ({backendURL, mode, modelToEdit, modelType}) {
                 <Dropdown
                     backendURL={backendURL}
                     routePath={`/${modelType}-makes`}
-                    colName='Make'
+                    colName='makeID'
+                    displayName1='Make'
                     isRequired='required'
                     selectedVal={modelData['Make'] || ''}>
                 </Dropdown>

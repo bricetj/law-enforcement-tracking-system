@@ -13,11 +13,12 @@ import OfficerForm from '../components/OfficerForm.jsx';
  * mode.
  * @param {object} officerToEdit An Officers object to be edited.
  */
-function CreateOrEditOfficerPage({mode, title, officerToEdit}) {
+function CreateOrEditOfficerPage({backendURL, mode, title, officerToEdit}) {
     return (
         <>
             <h2>{title}</h2>
             <OfficerForm
+                backendURL={backendURL}
                 mode={mode}
                 officerToEdit={officerToEdit}>
             </OfficerForm>

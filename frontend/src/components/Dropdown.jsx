@@ -24,7 +24,7 @@ import { useEffect, useState } from 'react';
  * @param {string} selectedVal A value to prepopulate dropdown (if editing or viewing). 
  * @returns An HTML form with various inputs for Firearms data.
  */
-function Dropdown ({backendURL, routePath, colName, isReadOnly, isRequired, selectedVal}) {
+function Dropdown ({backendURL, routePath, colName, displayName1, displayName2, isReadOnly, isRequired, selectedVal, onChangeHandler}) {
     const [options, setOptions] = useState([]);
     const [selectedValue, setSelectedValue] = useState('');
 
@@ -55,11 +55,12 @@ function Dropdown ({backendURL, routePath, colName, isReadOnly, isRequired, sele
             readOnly = {isReadOnly}
             required = {isRequired}
             value = {selectedValue}
-            onChange={(e) => setSelectedValue(e.target.value)}>
-                <option disabled value="">Select an option</option>
+            onChange={onChangeHandler}>
+                <option disabled value=''>Select an option</option>
                 {options.map(option => (
-                    <option key={option.id} value={option.id}>
-                        {option[colName]}
+                    <option key={option['ID']} value={option['ID']}>
+                        {!displayName2 && option['ID'] + ' - ' + option[displayName1]}
+                        {displayName2 && option['ID'] + ' - ' + option[displayName1] + ' ' + option[displayName2]}
                 </option>
                 ))}
         </select>

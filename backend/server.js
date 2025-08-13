@@ -26,16 +26,145 @@ app.use(cors({ credentials: true, origin: "*" }));
 app.use(express.json());
 
 
-// Route handler for retrieving officers.
+/*
+ * POST Route Handlers
+ */
+
+// Route handler for creating a new officer record.
+app.post('/officers', async (req, res) => {
+    const newOfficer = req.body
+
+    const ssn = newOfficer.ssn;
+    const firstName = newOfficer.firstName;
+    const middleName = newOfficer.middleName;
+    const lastName = newOfficer.lastName;
+    const dob = newOfficer.dob;
+    const address = newOfficer.address;
+    const email = newOfficer.email;
+    const isActive = newOfficer.isActive;
+
+    try {
+        const query1 = `CALL sp_create_officer('${ssn}', '${firstName}', '${middleName}',\
+         '${lastName}', '${dob}','${address}','${email}',${isActive});`;
+
+        const [officer] = await db.query(query1);
+        res.status(201).json(officer);
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+
+// Route handler for creating a new incident record.
+app.post('/incidents', async (req, res) => {
+    const newIncident = req.body
+
+    const date = newIncident.date;
+    const description = newIncident.description;
+    const caseOfficer = newIncident.officerID;
+    const isActive = newIncident.isActive;
+
+    try {
+        const query1 = `CALL sp_create_incident('${date}', '${description}', '${caseOfficer}', ${isActive});`;
+
+        const [incident] = await db.query(query1);
+        res.status(201).json(incident);
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+// Route handler for creating a new vehicle record.
+app.post('/vehicles', async (req, res) => {
+    const newVehicle = req.body
+
+    const id = newVehicle.id;
+    const year = newVehicle.year;
+    const modelID = newVehicle.modelID;
+    const color = newVehicle.color;
+    const licensePlate = newVehicle.licensePlate;
+    const isActive = newVehicle.isActive;
+
+    try {
+        const query1 = `CALL sp_create_vehicle('${id}', ${year}, ${modelID},\
+         '${color}', '${licensePlate}',${isActive});`;
+
+        const [vehicle] = await db.query(query1);
+        res.status(201).json(vehicle);
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+// Route handler for creating a new officer incidents record.
+app.post('/affiliated-officers', async (req, res) => {
+    const newAffiliatedOfficer = req.body
+
+    const officerID = newAffiliatedOfficer.officerID;
+    const incidentID = newAffiliatedOfficer.incidentID;
+    const isCaseOfficer = newAffiliatedOfficer.isCaseOfficer;
+
+    try {
+        const query1 = `CALL sp_create_officer_incident_record(${officerID}, ${incidentID}, ${isCaseOfficer});`;
+
+        const [affiliatedOfficer] = await db.query(query1);
+        res.status(201).json(affiliatedOfficer);
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+/*
+ * GET Route Handlers
+ */
+
+
+// Route handler for retrieving all officers.
 app.get('/officers', async (req, res) => {
     try {
-        const query1 = `SELECT officerID AS 'ID', firstName AS 'First Name', middleName AS 'Middle Name',\
-                        lastName AS 'Last Name', ssn AS SSN, DATE_FORMAT(dob, '%Y-%m-%d') AS 'Date of Birth',\
-                        address AS Address, email AS Email, IF(isActive = 1, 'Active', 'Inactive') AS 'Active Status' \
-                        FROM Officers ORDER BY officerID ASC;`;
+        const query1 = `SELECT * FROM view_officers;`;
         
         const [officers] = await db.query(query1);
         res.status(200).json(officers);
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+// Route handler for retrieving an officer by ID.
+app.get('/officers/:id', async (req, res) => {
+    const officerID = req.params.id;
+
+    try {
+        const query1 = `CALL sp_select_officer_by_id(${officerID})`;
+        
+        const [officer] = await db.query(query1);
+        res.status(200).json(officer);
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+// Route handler for retrieving incidents.
+app.get('/incidents', async (req, res) => {
+    try {
+        // Define queries
+        const query1 = `SELECT * FROM view_incidents;`
+        
+        const [incidents] = await db.query(query1);
+        res.status(200).json(incidents);
 
     } catch (error) {
         console.error("Error executing queries:", error);
@@ -49,20 +178,13 @@ app.get('/incidents/:id', async (req, res) => {
     const incidentID = req.params.id;
     try {
         // Query 1 retrieves data about a particular incident.
-        const query1 = `SELECT Incidents.incidentID AS 'ID', DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS 'Date',\
-                        Incidents.description AS 'Narrative', Officers.lastName\
-                        AS 'Last Name', IF(Incidents.isActive = 1, 'Active', 'Inactive') AS 'Case Status' FROM Incidents\
-                        JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID\
-                        JOIN Officers ON Officers.officerID = OfficerIncidents.officerID WHERE Incidents.incidentID = ${incidentID}\
-                        AND OfficerIncidents.isCaseOfficer = 1;`;
+        const query1 = `CALL sp_select_incident_by_id(${incidentID});`;
 
         // Query 2 retrieves data about officers affiliated with an incident.
-        const query2 = `SELECT Officers.lastName AS 'Affiliated Officers' FROM Officers JOIN OfficerIncidents ON\
-                        Officers.officerID = OfficerIncidents.officerID WHERE OfficerIncidents.incidentID = ${incidentID} AND\
-                        OfficerIncidents.isCaseOfficer = 0;`;
+        const query2 = `CALL sp_select_other_officers_by_incident_id(${incidentID});`;
         
-        const [incidents] = await db.query(query1);
-        const [officers] = await db.query(query2);
+        const [[incidents]] = await db.query(query1);
+        const [[officers]] = await db.query(query2);
 
         // Sends back the results in JSON as array.
         res.status(200).json([incidents, officers]);
@@ -74,18 +196,16 @@ app.get('/incidents/:id', async (req, res) => {
 });
 
 
-// Route handler for retrieving incidents.
-app.get('/incidents', async (req, res) => {
+// Route handler for retrieving affiliated officers by incident ID.
+app.get('/incidents/affiliated-officers/:id', async (req, res) => {
+    const incidentID = req.params.id;
     try {
-        // Define queries
-        const query1 = `SELECT Incidents.incidentID AS 'ID', DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS 'Date',\
-                        Officers.lastName AS 'Case Officer', IF(Incidents.isActive = 1, 'Active', 'Inactive') AS 'Case Status'\
-                        FROM Incidents JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID JOIN Officers ON \
-                        Officers.officerID = OfficerIncidents.officerID WHERE OfficerIncidents.isCaseOfficer = 1\
-                        ORDER BY Incidents.incidentID ASC;`;
+        const query1 = `CALL sp_select_other_officers_by_incident_id(${incidentID});`;
         
-        const [incidents] = await db.query(query1);
-        res.status(200).json(incidents);
+        const [[officers]] = await db.query(query1);
+
+        // Sends back the results in JSON as array.
+        res.status(200).json(officers);
 
     } catch (error) {
         console.error("Error executing queries:", error);
@@ -97,15 +217,26 @@ app.get('/incidents', async (req, res) => {
 // Route handler for retrieving vehicles.
 app.get('/vehicles', async (req, res) => {
     try {
-        const query1 = `SELECT Vehicles.vehicleID AS 'ID', Vehicles.color AS 'Color', Vehicles.year AS 'Year',\
-                        VehicleMakes.make AS 'Make', VehicleModels.model AS 'Model', Vehicles.licensePlate as 'License Plate',\
-                        Officers.lastName AS 'Assigned Officer', IF(Vehicles.isActive = 1, 'Active', 'Inactive') AS 'Active Status' FROM\
-                        Vehicles JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID JOIN VehicleMakes\
-                        ON VehicleMakes.vehicleMakeID = VehicleModels.vehicleMakeID LEFT JOIN Officers ON Officers.vehicleID = \
-                        Vehicles.vehicleID ORDER BY Vehicles.vehicleID ASC;`;
+        const query1 = `SELECT * FROM view_vehicles;`;
         
-        const [incidents] = await db.query(query1);
-        res.status(200).json(incidents);
+        const [vehicles] = await db.query(query1);
+        res.status(200).json(vehicles);
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+// Route handler for retrieving an officer by ID.
+app.get('/vehicles/:id', async (req, res) => {
+    const vehicleID = req.params.id;
+
+    try {
+        const query1 = `CALL sp_select_vehicle_by_id('${vehicleID}')`;
+        
+        const [vehicle] = await db.query(query1);
+        res.status(200).json(vehicle);
 
     } catch (error) {
         console.error("Error executing queries:", error);
@@ -117,14 +248,10 @@ app.get('/vehicles', async (req, res) => {
 // Route handler for retrieving firearms.
 app.get('/firearms', async (req, res) => {
     try {
-        const query1 = `SELECT Firearms.firearmID AS 'ID', Firearms.year AS 'Year', FirearmMakes.make AS 'Make',\
-                        FirearmModels.model AS 'Model', Officers.lastName AS 'Assigned Officer', IF(Firearms.isActive = 1, 'Active', 'Inactive')\
-                        AS 'Active Status' FROM Firearms JOIN FirearmModels ON Firearms.firearmModelID = FirearmModels.firearmModelID\
-                        JOIN FirearmMakes ON FirearmMakes.firearmMakeID = FirearmModels.firearmMakeID LEFT JOIN Officers ON Officers.officerID\
-                        = Firearms.officerID ORDER BY Firearms.firearmID ASC;`;
+        const query1 = `SELECT * FROM view_firearms;`;
         
-        const [incidents] = await db.query(query1);
-        res.status(200).json(incidents);
+        const [firearms] = await db.query(query1);
+        res.status(200).json(firearms);
 
     } catch (error) {
         console.error("Error executing queries:", error);
@@ -136,7 +263,7 @@ app.get('/firearms', async (req, res) => {
 // Route handler for retrieving vehicle makes.
 app.get('/vehicle-makes', async (req, res) => {
     try {
-        const query1 = `SELECT vehicleMakeID AS 'ID', make AS 'Make' FROM VehicleMakes;`;
+        const query1 = `SELECT * FROM view_vehicle_makes;`;
 
         const [vehicleMakes] = await db.query(query1);
         res.status(200).json(vehicleMakes);
@@ -150,12 +277,10 @@ app.get('/vehicle-makes', async (req, res) => {
 // Route handler for retrieving vehicle models.
 app.get('/vehicle-models', async (req, res) => {
     try {
-        const query1 = `SELECT VehicleModels.vehicleModelID AS 'ID', VehicleMakes.make AS 'Make',\
-                        VehicleModels.model AS 'Model' FROM VehicleModels JOIN VehicleMakes ON VehicleModels.vehicleMakeID =\
-                        VehicleMakes.vehicleMakeID;`;
+        const query1 = `SELECT * FROM view_vehicle_models;`;
         
-        const [vehicleMakes] = await db.query(query1);
-        res.status(200).json(vehicleMakes);
+        const [vehicleModels] = await db.query(query1);
+        res.status(200).json(vehicleModels);
 
     } catch (error) {
         console.error("Error executing queries:", error);
@@ -166,7 +291,7 @@ app.get('/vehicle-models', async (req, res) => {
 // Route handler for retrieving firearm makes.
 app.get('/firearm-makes', async (req, res) => {
     try {
-        const query1 = `SELECT firearmMakeID AS 'ID', make AS 'Make' FROM FirearmMakes;`;
+        const query1 = `SELECT * FROM view_firearm_makes;`;
         
         const [firearmMakes] = await db.query(query1);
         res.status(200).json(firearmMakes)
@@ -180,12 +305,10 @@ app.get('/firearm-makes', async (req, res) => {
 // Route handler for retrieving firearm models.
 app.get('/firearm-models', async (req, res) => {
     try {
-        const query1 = `SELECT FirearmModels.firearmModelID AS 'ID', FirearmMakes.make AS 'Make',\
-                        FirearmModels.model AS 'Model' FROM FirearmModels JOIN FirearmMakes ON FirearmModels.firearmMakeID =\
-                        FirearmMakes.firearmMakeID;`;
+        const query1 = `SELECT * FROM view_firearm_models;`;
         
-        const [vehicleMakes] = await db.query(query1);
-        res.status(200).json(vehicleMakes)
+        const [firearmModels] = await db.query(query1);
+        res.status(200).json(firearmModels)
 
     } catch (error) {
         console.error("Error executing queries:", error);
@@ -193,6 +316,75 @@ app.get('/firearm-models', async (req, res) => {
     }
 });
 
+
+/*
+ * PUT Route Handlers
+ */
+
+// Route handler for updating an officer record.
+app.put('/officers/:id', async (req, res) => {
+    const officerID = req.params.id;
+    const officerData = req.body
+
+    const ssn = officerData.ssn;
+    const firstName = officerData.firstName;
+    const middleName = officerData.middleName;
+    const lastName = officerData.lastName;
+    const dob = officerData.dob;
+    const address = officerData.address;
+    const email = officerData.email;
+    const isActive = officerData.isActive;
+
+    try {
+        const query1 = `CALL sp_update_officer(${officerID}, '${ssn}', '${firstName}', '${middleName}',\
+         '${lastName}', '${dob}','${address}','${email}',${isActive});`;
+
+        const [officer] = await db.query(query1);
+        res.status(200).json(officer);
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+app.put('/incidents/:id', async (req, res) => {
+    const incidentID = req.params.id;
+    const incidentData = req.body
+
+    const date = incidentData.date;
+    const description = incidentData.description;
+    const isActive = incidentData.isActive;
+
+    try {
+        const query1 = `CALL sp_update_incident('${incidentID}', '${date}', "${description}", ${isActive});`;
+
+        const [incident] = await db.query(query1);
+        res.status(200).json(incident);
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+// Route handler for running stored procedure to reset database.
+app.post('/reset-database', async (req, res) => {
+    try {
+        const resetSP = `CALL sp_load_lets();`;
+        const [reset] = await db.query(resetSP);
+        res.status(201).json(reset)
+
+    } catch (error) {
+        console.error("Error executing stored procedure:", error);
+        res.status(500).send("An error occurred while executing the database stored procedure.");
+    }
+});
+
+
+/*
+ * DELETE Route Handlers
+ */
 
 // Route handler for deleting officers by ID.
 app.delete('/officers/:id', async (req, res) => {
@@ -315,16 +507,18 @@ app.delete('/firearm-models/:id', async (req, res) => {
 });
 
 
-// Route handler for running stored procedure to reset database.
-app.post('/reset-database', async (req, res) => {
+// Route handler for deleting OfficerIncidents records by IDs.
+app.delete('/incidents/officers/:id1/:id2', async (req, res) => {
+    officerID = req.params.id1
+    incidentID = req.params.id2
     try {
-        const resetSP = `CALL sp_load_lets();`;
-        const [reset] = await db.query(resetSP);
-        res.status(201).json(reset)
+        const deleteQuery = `CALL sp_delete_affiliated_officer(${officerID}, ${incidentID});`;
+        await db.query(deleteQuery);
+        res.status(204).send("Delete successful.");
 
     } catch (error) {
-        console.error("Error executing stored procedure:", error);
-        res.status(500).send("An error occurred while executing the database stored procedure.");
+        console.error("Error executing PL/SQL:", error);
+        res.status(500).send("An error occurred while executing the PL/SQL.");
     }
 });
 

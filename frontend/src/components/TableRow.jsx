@@ -20,11 +20,12 @@ import Tooltip from './Tooltip';
  * selected in the table.
  * @returns A React element that renders an HTML table row.
  */
-const TableRow = ({ isIncidents, rowObject, onEdit, onView, onDelete}) => {
+const TableRow = ({ isIncidents, isAffiliatedOfficers, rowObject, onEdit, onView, onDelete }) => {
     const objectID = rowObject['ID'];
+
     return (
         <tr>
-            {isIncidents &&
+            {isIncidents && !isAffiliatedOfficers &&
                 <td className='table-icon'>
                     <Tooltip
                         text='View'
@@ -50,7 +51,7 @@ const TableRow = ({ isIncidents, rowObject, onEdit, onView, onDelete}) => {
                                 href='/'
                                 onClick = {e => {
                                     e.preventDefault();
-                                    onEdit(rowObject)}}>
+                                    onEdit(objectID)}}>
                             </MdCreate>}
                         delay={1000}
                     ></Tooltip>
