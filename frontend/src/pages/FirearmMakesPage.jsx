@@ -38,7 +38,7 @@ function FirearmMakesPage({backendURL}) {
 
     // Will be used to capture a particular FirearmMakes row to pre-populate
     // editing form.
-    const onEdit = (make) => {
+    const onEdit = (makeID, make) => {
         setMode('edit')
         setMake(make)
         setPopupOpen(true);

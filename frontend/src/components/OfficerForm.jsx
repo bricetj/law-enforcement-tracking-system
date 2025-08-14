@@ -8,7 +8,9 @@ import { useNavigate } from 'react-router-dom';
 
 /**
  * Creates an HTML form that can be used for both editing and creating
- * Officers entries. 
+ * Officers entries.
+* @param {string} backendURL The URL used to host the application.
+ * Is needed to initiate get requests. 
  * @param {string} mode A mode, either 'create' or 'edit'.
  * @param {object} officerToEdit An Officers object.
  * @returns An HTML form with various inputs for Officers data.
@@ -27,7 +29,7 @@ function OfficerForm ({backendURL, mode, officerToEdit}) {
                 }
         );
         // User is alerted if officer is successfully created and then is
-        // redirected back to the page.
+        // redirected back to the /officers page.
         if(response.status === 201){
                 alert('The officer record was successfully created.');
             } else {
@@ -36,7 +38,7 @@ function OfficerForm ({backendURL, mode, officerToEdit}) {
         navigate('/officers')
     };
 
-     // Calls the 'PUT /officers/:id' endpoint in the REST API.
+     // Calls the 'PUT /officers/:id' endpoint in the REST API to update an officer.
     const updateOfficer = async () => {
         const response = await fetch(backendURL + `/officers/${officerToEdit['id']}`, {
                     method: 'PUT',
@@ -44,7 +46,7 @@ function OfficerForm ({backendURL, mode, officerToEdit}) {
                     body: JSON.stringify(officerData)
                 }
         );
-        // User is alerted if officer is successfully updated and page reloads.
+        // User is alerted if officer is successfully updated and redirected to /officers.
         if(response.status === 200){
                 alert('Successfully edited the officer record.');
             } else {

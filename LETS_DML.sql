@@ -6,7 +6,7 @@
     Class/Section:  CS340 Introduction to Databases
     Assignment:     Project Step 3 - DML
     Date Created:   July 30, 2025
-    Last Modified:  August 7, 2025
+    Last Modified:  August 14, 2025
 
 ******************************************************************************/
 
@@ -82,40 +82,37 @@ FROM FirearmMakes;
 -- Vehicles page within the application. Also contains queries to update Vehicle info.
 --
 
--- Current query used to populate Vehicles page for standardized ID field
--- (will likely be replaced by a view).
-SELECT Vehicles.vehicleID AS 'ID', Vehicles.color AS 'Color', Vehicles.year AS 'Year',
-VehicleMakes.make AS 'Make', VehicleModels.model AS 'Model', Vehicles.licensePlate as
-'License Plate', Officers.lastName AS 'Assigned Officer', IF(Vehicles.isActive = 1,
-'Active', 'Inactive') AS 'Active Status'
+
+-- Populate Vehicles page (stored in a view).
+SELECT
+    Vehicles.vehicleID AS 'ID',
+    Vehicles.color AS 'Color',
+    Vehicles.year AS 'Year',
+    VehicleMakes.make AS 'Make',
+    VehicleModels.model AS 'Model',
+    Vehicles.licensePlate as 'License Plate',
+    Officers.lastName AS 'Assigned Officer',
+    IF(Vehicles.isActive = 1, 'Active', 'Inactive') AS 'Active Status'
 FROM Vehicles
-	JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID
-	JOIN VehicleMakes ON VehicleMakes.vehicleMakeID = VehicleModels.vehicleMakeID
-	LEFT JOIN Officers ON Officers.vehicleID = Vehicles.vehicleID
+    JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID
+    JOIN VehicleMakes ON VehicleMakes.vehicleMakeID = VehicleModels.vehicleMakeID
+    LEFT JOIN Officers ON Officers.vehicleID = Vehicles.vehicleID
 ORDER BY Vehicles.vehicleID ASC;
 
--- Populate Vehicles page (eventual view).
-SELECT Vehicles.vehicleID AS 'VIN', Vehicles.color AS 'Color', Vehicles.year AS 'Year',
-VehicleMakes.make AS 'Make', VehicleModels.model AS 'Model', Vehicles.licensePlate as
-'License Plate', Officers.lastName AS 'Assigned Officer', IF(Vehicles.isActive = 1,
-'Active', 'Inactive') AS 'Active Status'
+-- Select a vehicle by ID
+SELECT 
+	Vehicles.vehicleID AS 'id',
+	Vehicles.year AS 'year',
+	VehicleModels.vehicleMakeID AS 'makeID',
+	Vehicles.vehicleModelID AS 'modelID',
+	Vehicles.color AS 'color',
+	Vehicles.licensePlate AS 'licensePlate',
+	Vehicles.isActive AS 'isActive',
+	Officers.officerID AS 'officerID'
 FROM Vehicles
-	JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID
-	JOIN VehicleMakes ON VehicleMakes.vehicleMakeID = VehicleModels.vehicleMakeID
-	LEFT JOIN Officers ON Officers.vehicleID = Vehicles.vehicleID
-ORDER BY Vehicles.vehicleID ASC;
-
--- Populate Vehicles page (status = active)
-SELECT Vehicles.vehicleID AS 'VIN', Vehicles.color AS 'Color', Vehicles.year AS 'Year',
-VehicleMakes.make AS 'Make', VehicleModels.model AS 'Model', Vehicles.licensePlate as
-'License Plate', Officers.lastName AS 'Assigned Officer', IF(Vehicles.isActive = 1, 'Active',
-'Inactive') AS 'Active Status'
-FROM Vehicles
-	JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID
-	JOIN VehicleMakes ON VehicleMakes.vehicleMakeID = VehicleModels.vehicleMakeID
-	LEFT JOIN Officers ON Officers.vehicleID = Vehicles.vehicleID
-WHERE Vehicles.isActive = 1
-ORDER BY Vehicles.vehicleID ASC;
+JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID
+LEFT JOIN Officers ON Officers.vehicleID = Vehicles.vehicleID
+WHERE Vehicles.vehicleID = :idInput;
 
 -- Update vehicle model
 UPDATE Vehicles
@@ -147,69 +144,37 @@ WHERE vehicleID = :vehicle_id_from_dropdown_input;
 -- Incidents page within the application. Also contains queries to update Incident info.
 --
 
--- Current query used to populate Incidents page for standardized ID field
--- (will likely be replaced by a view).
-SELECT Incidents.incidentID AS 'ID', DATE_FORMAT(Incidents.date, '%Y-%m-%d')
-AS 'Date', Incidents.description AS 'Narrative', Officers.firstName AS 'First Name',
-Officers.lastName AS 'Last Name', IF(Incidents.isActive = 1, 'Active', 'Inactive') AS 'Case Status'
-	JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID
-	JOIN Officers ON OfficerIncidents.officerID = Officers.officerID
-WHERE OfficerIncidents.isCaseOfficer = 1;
-
--- Populate Incidents page (to be used as a view later).
-SELECT Incidents.incidentID AS 'Incident Number', DATE_FORMAT(Incidents.date, '%Y-%m-%d')
-AS 'Date', Incidents.description AS 'Narrative', Officers.firstName AS 'First Name',
-Officers.lastName AS 'Last Name', IF(Incidents.isActive = 1, 'Active', 'Inactive') AS 'Case Status'
-	JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID
-	JOIN Officers ON OfficerIncidents.officerID = Officers.officerID
-WHERE OfficerIncidents.isCaseOfficer = 1;
-
--- Populate Incidents page (basic info only)
-SELECT Incidents.incidentID AS 'Incident Number', DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS
-'Date', Officers.lastName AS 'Case Officer', IF(Incidents.isActive = 1, 'Active', 'Inactive') AS
-'Case Status'
+-- Populate Incidents (stored as a view).
+SELECT
+    Incidents.incidentID AS 'ID',
+    DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS 'Date',
+    Officers.lastName AS 'Case Officer',
+    IF(Incidents.isActive = 1, 'Active', 'Inactive') AS 'Case Status'
 FROM Incidents
-	JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID
-	JOIN Officers ON Officers.officerID = OfficerIncidents.officerID
+    JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID
+    JOIN Officers ON Officers.officerID = OfficerIncidents.officerID
 WHERE OfficerIncidents.isCaseOfficer = 1
 ORDER BY Incidents.incidentID ASC;
 
--- Populate Incidents page (status = active)
-SELECT Incidents.incidentID AS 'Incident Number', DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS
-'Date', Incidents.description AS 'Narrative', Officers.firstName AS 'First Name',
-Officers.lastName AS 'Last Name', IF(Incidents.isActive = 1, 'Active', 'Inactive') AS 'Case Status'
-FROM Incidents
-	JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID
-	JOIN Officers ON OfficerIncidents.officerID = Officers.officerID
-WHERE OfficerIncidents.isCaseOfficer = 1 AND Incidents.isActive = 1;
-
--- Display incident per ID
-SELECT Incidents.incidentID AS 'Incident Number', DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS
-'Date', Incidents.description AS 'Narrative', Officers.firstName AS 'First Name', Officers.lastName AS
-'Last Name', IF(Incidents.isActive = 1, 'Active', 'Inactive') AS 'Case Status'
+-- Display incident with case officer per ID
+SELECT
+	Incidents.incidentID AS 'id',
+	DATE_FORMAT(Incidents.date, '%Y-%m-%d') AS 'date',
+	Incidents.description AS 'description',
+	Officers.officerID AS 'officerID',
+	Officers.lastName AS 'lastName',
+	Incidents.isActive as 'isActive'
 FROM Incidents
 	JOIN OfficerIncidents ON Incidents.incidentID = OfficerIncidents.incidentID
 	JOIN Officers ON Officers.officerID = OfficerIncidents.officerID
-WHERE Incidents.incidentID = :incident_id_from_dropdown_Input AND OfficerIncidents.isCaseOfficer = 1;
+WHERE Incidents.incidentID = :idInput AND OfficerIncidents.isCaseOfficer = 1;
 
--- Gather associated officers per incident
-SELECT Officers.officerID, Officers.firstName, Officers.lastName
-FROM Officers
-	JOIN OfficerIncidents ON Officers.officerID = OfficerIncidents.officerID
-	JOIN Incidents ON OfficerIncidents.incidentID = Incidents.incidentID
-WHERE Incident.incidentID = :incident_id_from_dropdown_Input;
-
--- Update incident description
+-- Update incident information
 UPDATE Incidents
-SET
-	description = :descriptionInput
-WHERE incidentID = :incident_id_from_dropdown_Input;
-
--- Update incident active status
-UPDATE Incidents
-SET
-	isActive = :isActiveCheckbox
-WHERE incidentID = :incident_id_from_dropdown_Input;
+SET date = dateNew,
+	description = descriptionNew,
+	isActive = isActiveNew
+WHERE incidentID = incidentIDInput;
 
 
 --
@@ -217,36 +182,44 @@ WHERE incidentID = :incident_id_from_dropdown_Input;
 -- Officers page within the application. Also contains queries to update Officer info.
 --
 
--- Current query used to populate Officers page for standardized ID field
--- (will likely be replaced by a view).
-SELECT officerID AS 'ID', firstName AS 'First Name', middleName AS 'Middle Name',
-lastName AS 'Last Name', ssn AS SSN, DATE_FORMAT(dob, '%Y-%m-%d') AS 'Date of Birth',
-address AS Address, email AS Email, IF(isActive = 1, 'Active', 'Inactive') AS 'Active Status'
-FROM Officers
-ORDER BY officerID ASC;
+-- Populate Officers page (stored as a view).
+SELECT 
+    officerID AS 'ID',
+    firstName AS 'First Name',
+    IF(middleName = 'undefined', '', middleName) AS 'Middle Name',
+    lastName AS 'Last Name',
+    ssn AS 'SSN',
+    DATE_FORMAT(dob, '%Y-%m-%d') AS 'Date of Birth',
+    IF(address = 'undefined', '', address) AS 'Address',
+    IF(email = 'undefined', '', email) AS 'Email',
+    IF(isActive = 1, 'Active', 'Inactive') AS 'Active Status'
+FROM Officers ORDER BY officerID ASC;
 
--- Populate Officers page (will like be the query used in the view).
-SELECT officerID AS 'Badge No.', firstName AS 'First Name', middleName AS 'Middle Name',
-lastName AS 'Last Name', ssn AS SSN, DATE_FORMAT(dob, '%Y-%m-%d') AS 'Date of Birth',
-address AS Address, email AS Email, IF(isActive = 1, 'Active', 'Inactive') AS 'Active Status'
+-- Select an Officer By ID
+SELECT 
+	officerID AS 'id',
+	firstName,
+	middleName,
+	lastName,
+	ssn,
+	DATE_FORMAT(dob, '%Y-%m-%d') as dob,
+	address,
+	email,
+	isActive
 FROM Officers
-ORDER BY officerID ASC;
+WHERE officerID = :idInput;
 
--- Populate Officers page (active)
-SELECT officerID AS 'Badge No.', firstName AS 'First Name', middleName AS 'Middle Name',
-lastName AS 'Last Name', ssn AS SSN, DATE_FORMAT(dob, '%Y-%m-%d') AS 'Date of Birth',
-address AS Address, email AS Email, IF(isActive = 1, 'Active', 'Inactive') AS 'Active Status'
-FROM Officers
-WHERE Officers.isActive = 1
-ORDER BY officerID ASC;
-
--- Update Officer name
-UPDATE Officer
-SET
-	firstName = :firstNameInput,
-	middleName = :middleNameInput,
-	lastName = :lastNameInput
-WHERE officerID = :officer_id_from_dropdown_Input;
+-- Update Officer information
+UPDATE Officers
+SET ssn = ssnNew,
+	firstName = firstNameNew,
+	middleName = middleNameNew,
+	lastName = lastNameNew,
+	dob = dobNew,
+	address = addressNew,
+	email = emailNew,
+	isActive = isActiveNew
+WHERE officerID = officerIDInput;
 
 -- Update Officer vehicle
 UPDATE Officer
@@ -254,45 +227,56 @@ SET
 	vehicleID = :vehicle_id_from_dropdown_Input
 WHERE officerID = :officer_id_from_dropdown_Input;
 
--- Update Officer contact info
-UPDATE Officer
-SET
-	address = :addressInput
-	email = :emailInput
-WHERE officerID = :officer_id_from_dropdown_Input;
 
--- Update Officer active status
-UPDATE Officer
-SET
-	isActive = :isActiveCheckbox
-WHERE officerID = :officer_id_from_dropdown_Input;
+--
+-- DISPLAY/UPDATE QUERIES (OFFICER/INCIDENTS): Queries to select and update
+-- OfficerIncidents data.
+--
 
+-- Gather associated officers per incident (that are not case officers)
+SELECT
+	Officers.officerID AS 'ID',
+	Officers.firstName AS 'firstName',
+	Officers.lastName AS 'lastName'
+FROM Officers
+	JOIN OfficerIncidents ON Officers.officerID = OfficerIncidents.officerID
+WHERE OfficerIncidents.incidentID = :idInput AND OfficerIncidents.isCaseOfficer = 0;
+
+-- Update an OfficerIncidents record
+UPDATE OfficerIncidents
+SET officerID = officerIDNew,
+	incidentID = incidentIDNew,
+	isCaseOfficer = isCaseOfficerNew
+WHERE officerID  = officerIDInput AND incidentID = incidentIDInput;
 
 --
 -- DISPLAY/UPDATE QUERIES (FIREARMS PAGE): Queries to display/filter data in table on
 -- Firearms page within the application. Also contains queries to update Firearms info.
 --
 
--- -- Current query used to populate Firearms page for standardized ID field
--- (will likely be replaced by a view).
-SELECT Firearms.firearmID AS 'ID', Firearms.year AS 'Year', FirearmMakes.make AS
-'Make', FirearmModels.model AS 'Model', Officers.lastName AS 'Assigned Officer',
-IF(Firearms.isActive = 1, 'Active', 'Inactive') AS 'Active Status'
+-- Populate Firearms page (stored as a view)
+SELECT
+    Firearms.firearmID AS 'ID',
+    Firearms.year AS 'Year',
+    FirearmMakes.make AS 'Make',
+    FirearmModels.model AS 'Model',
+    Officers.lastName AS 'Assigned Officer',
+    IF(Firearms.isActive = 1, 'Active', 'Inactive') AS 'Active Status'
 FROM Firearms
-	JOIN FirearmModels ON Firearms.firearmModelID = FirearmModels.firearmModelID
-	JOIN FirearmMakes ON FirearmMakes.firearmMakeID = FirearmModels.firearmMakeID
-	LEFT JOIN Officers ON Officers.officerID = Firearms.officerID
+    JOIN FirearmModels ON Firearms.firearmModelID = FirearmModels.firearmModelID
+    JOIN FirearmMakes ON FirearmMakes.firearmMakeID = FirearmModels.firearmMakeID
+    LEFT JOIN Officers ON Officers.officerID = Firearms.officerID
 ORDER BY Firearms.firearmID ASC;
 
--- Populate Firearms page (will likely be used as a view).
-SELECT Firearms.firearmID AS 'Serial Number', Firearms.year AS 'Year', FirearmMakes.make AS
-'Make', FirearmModels.model AS 'Model', Officers.lastName AS 'Assigned Officer',
-IF(Firearms.isActive = 1, 'Active', 'Inactive') AS 'Active Status'
+-- Select a firearm by ID
+SELECT 
+	firearmID AS 'id',
+	year,
+	firearmModelID AS 'modelID',
+	isActive,
+	officerID
 FROM Firearms
-	JOIN FirearmModels ON Firearms.firearmModelID = FirearmModels.firearmModelID
-	JOIN FirearmMakes ON FirearmMakes.firearmMakeID = FirearmModels.firearmMakeID
-	LEFT JOIN Officers ON Officers.officerID = Firearms.officerID
-ORDER BY Firearms.firearmID ASC;
+WHERE firearmID = :idInput;
 
 -- Update firearm officer
 UPDATE Firearms
@@ -302,23 +286,108 @@ WHERE firearmID = :firearm_id_from_dropdown_Input;
 
 
 --
+-- DISPLAY QUERIES (VEHICLE MAKES PAGE): Queries to display data in table on
+-- Vehicle Makes page.
+
+-- Display Vehicle Makes (stored as view)
+SELECT
+    vehicleMakeID AS 'ID',
+    make AS 'Make'
+FROM VehicleMakes
+ORDER BY vehicleMakeID ASC;
+
+
+-- Select Vehicle Make by ID
+SELECT 
+	vehicleMakeID AS 'id',
+	make
+FROM VehicleMakes
+WHERE vehicleMakeID = :idInput;
+
+--
+-- DISPLAY QUERIES (VEHICLE MODELS PAGE): Queries to display data in table on
+-- Vehicle Models page.
+
+-- Display Vehicle Models (stored as view)
+SELECT
+    VehicleModels.vehicleModelID AS 'ID',
+    VehicleMakes.make AS 'Make',
+    VehicleModels.model AS 'Model'
+FROM VehicleModels
+    JOIN VehicleMakes ON VehicleModels.vehicleMakeID = VehicleMakes.vehicleMakeID
+ORDER BY VehicleModels.vehicleModelID;
+
+-- Select Vehicle Model by ID
+SELECT 
+	vehicleModelID AS 'id',
+	model,
+	vehicleMakeID AS 'makeID'
+FROM VehicleModels
+WHERE vehicleModelID = :idInput;
+
+
+--
+-- DISPLAY QUERIES (FIREARM MAKES PAGE): Queries to display data in table on
+-- Firearm Makes page.
+
+-- Display Firearm Makes (stored as view)
+SELECT
+    firearmMakeID AS 'ID',
+    make AS 'Make'
+FROM FirearmMakes
+ORDER BY firearmMakeID ASC;
+
+-- Select Firearm Make by ID
+SELECT 
+	firearmMakeID AS 'id',
+	make
+FROM FirearmMakes
+WHERE firearmMakeID = :idInput;
+
+
+--
+-- DISPLAY QUERIES (FIREARM MODELS PAGE): Queries to display data in table on
+-- Firearm Models page.
+
+-- Display Firearm Models (stored as a view)
+SELECT
+    FirearmModels.firearmModelID AS 'ID',
+    FirearmMakes.make AS 'Make',
+    FirearmModels.model AS 'Model'
+FROM FirearmModels
+JOIN FirearmMakes ON FirearmModels.firearmMakeID = FirearmMakes.firearmMakeID
+ORDER BY FirearmModels.firearmModelID ASC;
+
+-- Select Firearm Model by ID
+SELECT 
+	firearmModelID AS 'id',
+	model,
+	firearmMakeID AS 'makeID'
+FROM FirearmModels
+WHERE firearmModelID = :idInput;
+
+
+--
 -- INSERTION QUERIES: For all entities within the application
 --
 
 -- Insert a new make into VehicleMakes.
-INSERT INTO VehicleMakes (make) VALUES (
+INSERT INTO VehicleMakes (make)
+VALUES (
 	:makeInput
 );
 
 -- Insert a new model into VehicleModels that is affiliated with a preexisting
 -- make.
-INSERT INTO VehicleModels (mode, vehicleMakeID) VALUES (
+INSERT INTO VehicleModels (mode, vehicleMakeID)
+VALUES (
 	:modelInput,
 	:vehicle_make_id_from_dropdown_Input
 );
 
 -- Insert a new Vehicle into Vehicles.
-INSERT INTO Vehicles (year, vehicleModelID, color, licensePlate, isActive) VALUES (
+INSERT INTO Vehicles (year, vehicleModelID, color, licensePlate, isActive)
+VALUES (
 	:yearInput,
 	:vehicle_model_id_from_dropdown_Input,
 	:vehicle_color_Input,
@@ -328,29 +397,32 @@ INSERT INTO Vehicles (year, vehicleModelID, color, licensePlate, isActive) VALUE
 
 -- Insert a new incident into Incidents. Will likely work in conjunction with queries
 -- below to affiliate a case officer and any other involved officers.
-INSERT INTO Incidents (date, description, isActive) VALUES (
+INSERT INTO Incidents (date, description, isActive)
+VALUES (
 	:dateInput,
 	:descriptionInput,
-	:isActiveCheckbox
+	:isActiveInput
 );
 
 -- Query to affiliate Officer(s) with Incidents.
-INSERT INTO OfficerIncidents (officerID, incidentID) VALUES (
-	:officer_id_from_dropdown_Input,
-	:incident_id_from_dropdown_Input
+INSERT INTO OfficerIncidents (officerID, incidentID, isCaseOfficer)
+VALUES (
+	:officerIDInput,
+	:incidentIDInput,
+	:isCaseOfficerInput
 );
 
 -- Insert a new Officers.
-INSERT INTO Officers (ssn, firstName, middleName, lastName, dob, address, email, isActive, vehicleID) VALUES (
+INSERT INTO Officers (ssn, firstName, middleName, lastName, dob, address, email, isActive)
+VALUES (
 	:ssnInput,
 	:firstNameInput,
-	:middleNameInput
-	:lastNameInput,
-	:dobInput,
-	:addressInput,
-	:emailInput,
-	:isActiveCheckbox,
-	:vehicle_id_from_dropdown_Input
+	:middleNameInput, 
+	:lastNameInput, 
+	:dobInput, 
+	:addressInput, 
+	:emailInput, 
+	:isActiveInput
 );
 
 -- Insert a new Firearm.

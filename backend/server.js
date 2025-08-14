@@ -41,7 +41,7 @@ app.post('/officers', async (req, res) => {
     const dob = newOfficer.dob;
     const address = newOfficer.address;
     const email = newOfficer.email;
-    const isActive = newOfficer.isActive;
+    const isActive = newOfficer.isActive ? newOfficer.isActive : 0;   // In case default "Inactive" not changed.
 
     try {
         const query1 = `CALL sp_create_officer('${ssn}', '${firstName}', '${middleName}',\
@@ -64,7 +64,7 @@ app.post('/incidents', async (req, res) => {
     const date = newIncident.date;
     const description = newIncident.description;
     const caseOfficer = newIncident.officerID;
-    const isActive = newIncident.isActive;
+    const isActive = newIncident.isActive ? newIncident.isActive : 0; // In case default "Inactive" not changed.
 
     try {
         const query1 = `CALL sp_create_incident('${date}', '${description}', '${caseOfficer}', ${isActive});`;
@@ -87,7 +87,7 @@ app.post('/vehicles', async (req, res) => {
     const modelID = newVehicle.modelID;
     const color = newVehicle.color;
     const licensePlate = newVehicle.licensePlate;
-    const isActive = newVehicle.isActive;
+    const isActive = newVehicle.isActive ? newVehicle.isActive : 0;     // In case default "Inactive" not changed.
 
     try {
         const query1 = `CALL sp_create_vehicle('${id}', ${year}, ${modelID},\
@@ -213,7 +213,6 @@ app.get('/affiliated-officers/:id', async (req, res) => {
     }
 });
 
-
 // Route handler for retrieving vehicles.
 app.get('/vehicles', async (req, res) => {
     try {
@@ -252,6 +251,21 @@ app.get('/firearms', async (req, res) => {
         
         const [firearms] = await db.query(query1);
         res.status(200).json(firearms);
+
+    } catch (error) {
+        console.error("Error executing queries:", error);
+        res.status(500).send("An error occurred while executing the database queries.");
+    }
+});
+
+// Route handler for retrieving a firearm by ID.
+app.get('/firearms/:id', async (req, res) => {
+    const firearmID = req.params.id
+    try {
+        const query1 = `CALL sp_select_firearm_by_id('${firearmID}')`;
+        
+        const [firearm] = await db.query(query1);
+        res.status(200).json(firearm);
 
     } catch (error) {
         console.error("Error executing queries:", error);
@@ -531,7 +545,7 @@ app.delete('/firearm-models/:id', async (req, res) => {
 
 
 // Route handler for deleting OfficerIncidents records by IDs.
-app.delete('/incidents/officers/:id1/:id2', async (req, res) => {
+app.delete('/affiliated-officers/:id1/:id2', async (req, res) => {
     officerID = req.params.id1
     incidentID = req.params.id2
     try {

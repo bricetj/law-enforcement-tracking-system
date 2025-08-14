@@ -51,7 +51,7 @@ function VehiclesPage( {backendURL, setVehicleToEdit} ) {
     // editing form on CreateOrEditVehiclePage and redirect to that page.
     const onEdit = (vehicleID) => {
         loadVehicleByID(vehicleID);
-        navigate('/edit-vehicle')
+        navigate('/edit-vehicle');
     }
 
     // Calls the Delete route handler.

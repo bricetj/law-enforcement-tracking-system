@@ -42,41 +42,34 @@ function FirearmForm ({backendURL, mode, firearmToEdit}) {
                 <label>Serial Number:&nbsp;
                     <input
                         type='text'
-                        name='Serial Number'
+                        name='id'
                         required='required'
                         placeholder='Enter Serial Number here'
-                        value={firearmData['ID'] || ''}
+                        value={firearmData['id'] || ''}
                         onChange={onChangeHandler} />
                 </label>
                 &nbsp;&nbsp;
                 <label>Year:&nbsp;
                     <input
                         type='number'
-                        name='Year'
+                        name='year'
                         required='required'
                         placeholder='Enter Year here'
-                        value={firearmData['Year'] || ''}
+                        value={firearmData['year'] || ''}
                         onChange={onChangeHandler} />
                 </label>
                 <br/>
                 <br/>
-                <label>Make:&nbsp;
-                    <Dropdown
-                        backendURL={backendURL}
-                        routePath={`/firearm-makes`}
-                        colName='Make'
-                        isRequired='required'
-                        selectedVal={firearmData['Make'] || ''}>
-                    </Dropdown>
-                </label>
-                &nbsp;&nbsp;
                 <label>Model:&nbsp;
                     <Dropdown
                         backendURL={backendURL}
                         routePath={`/firearm-models`}
-                        colName='Model'
+                        colName='modelID'
+                        displayName1={'Make'}
+                        displayName2={'Model'}
                         isRequired='required'
-                        selectedVal={firearmData['Model'] || ''}>
+                        selectedVal={firearmData['modelID'] || ''}
+                        onChangeHandler={onChangeHandler}>
                     </Dropdown>
                 </label>
                 <br/>
@@ -85,21 +78,24 @@ function FirearmForm ({backendURL, mode, firearmToEdit}) {
                     <Dropdown
                         backendURL={backendURL}
                         routePath={'/officers'}
-                        colName='Last Name'
+                        colName='officerID'
+                        displayName1='First Name'
+                        displayName2='Last Name'
                         isRequired='required'
-                        selectedVal={firearmData['Assigned Officer'] || ''}>
+                        selectedVal={firearmData['officerID'] || ''}
+                        onChange={onChangeHandler}>
                     </Dropdown>
                 </label>
                 &nbsp;&nbsp;
                 <label>Status:&nbsp;
                     <select
                         type='text'
-                        name='Active Status'
+                        name='isActive'
                         required='required'
-                        value={firearmData['Active Status'] || ''}
+                        value={firearmData['isActive'] || ''}
                         onChange={onChangeHandler}>
-                            <option value='1'>Active</option> 
                             <option value='0'>Inactive</option>
+                            <option value='1'>Active</option> 
                     </select>
                 </label>
                 <br/>

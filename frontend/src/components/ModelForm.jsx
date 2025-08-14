@@ -29,7 +29,7 @@ function ModelForm ({backendURL, mode, modelToEdit, modelType}) {
         }
     }, [mode, modelToEdit]);
 
-    // Handles changes to form data below (if edited).
+    // Handles changes to form data below (if changed).
     const onChangeHandler = (f) => {
         const { name, value } = f.target;
         setModelData((previous) => ({

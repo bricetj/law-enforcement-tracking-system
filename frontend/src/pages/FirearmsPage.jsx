@@ -35,20 +35,31 @@ function FirearmsPage( {backendURL, setFirearmToEdit} ) {
         loadFirearms();
     }, []);
 
+    // Calls the 'GET /firearms/:id' endpoint in the REST API.
+    const loadFirearmByID = async (id) => {
+        try {
+            const responseFirearm = await fetch(backendURL + `/firearms/${id}`);
+            const dataFirearm = await responseFirearm.json();
+            setFirearmToEdit(dataFirearm[0][0]);
+        } catch (error) {
+            console.log (error);
+        }
+    };
+
     // Will be used to capture a particular firearms row to pre-populate
     // editing form on CreateOrEditFirearmPage and redirect to that page.
-    const onEdit = (firearm) => {
-        setFirearmToEdit(firearm)
-        navigate('/edit-firearm')
+    const onEdit = (firearmID) => {
+        loadFirearmByID(firearmID);
+        navigate('/edit-firearm');
     }
 
     // Calls the Delete route handler.
     const onDelete = useCallback(async (id) => {
         const response = await fetch(backendURL + `/firearms/${id}`, { method: 'DELETE' });
         if (response.status === 204) {
-            setFirearms(firearms.filter( e => e['ID'] !== id))
+            setFirearms(firearms.filter( e => e['ID'] !== id));
         } else {
-            alert(`Failed to delete firearm with id = ${id}, status code = ${response.status}`)
+            alert(`Failed to delete firearm with id = ${id}, status code = ${response.status}`);
         }
     }, [firearms])
 

@@ -20,6 +20,7 @@
  * @param {string} yesButtonText Text to be displayed in the confirmation button.
  * @param {function} onNo Function that runs when no is selected.
  * @param {function} onYes Function that runs when yes is selected.
+ * @param {object} itemToSubmit Item to be submitted (if applicable).
  * @returns An HTML div element with a message, additional elements (if applicable),
  * and two buttons.
  */

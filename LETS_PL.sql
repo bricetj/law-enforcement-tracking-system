@@ -249,6 +249,7 @@ BEGIN
 END //
 DELIMITER ;
 
+
 --
 -- Creates a stored procedure to SELECT a VehicleMake by vehicleMakeID.
 --
@@ -847,7 +848,7 @@ DELIMITER ;
 
 
 --
--- Creates a stored procedure to delete a firearm model by ID.
+-- Creates a stored procedure to delete an officer affiliated with an incident.
 --
 DROP PROCEDURE IF EXISTS sp_delete_affiliated_officer;
 DELIMITER //

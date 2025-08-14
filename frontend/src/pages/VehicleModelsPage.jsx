@@ -40,7 +40,7 @@ function VehicleModelsPage({backendURL, modelType}) {
 
     // Will be used to capture a particular VehicleModel row to pre-populate
     // editing form.
-    const onEdit = (make) => {
+    const onEdit = (makeID, make) => {
         setMode('edit');
         setModel(make);
         setPopupOpen(true);

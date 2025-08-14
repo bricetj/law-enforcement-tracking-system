@@ -101,40 +101,6 @@ p {
     padding: 20px;
 }
 
-.narrative-container {
-    display: flex; 
-    justify-content: center;
-}
-
-.narrative-container label {
-    text-align: left;
-}
-
-.table-container {
-    min-width: 1000px;
-    max-width: 1105px;
-    margin: auto;
-}
-
-.small-table-container {
-    min-width: 100px;
-    max-width: 300px;
-}
-
-.small-table-container table {
-    background-color: white;
-    width: 300px;
-}
-
-.small-table-container table thead {
-    display: none;
-}
-
-.small-table-container a {
-    text-decoration: none;
-    margin: 10px;
-}
-
 table {
     width: 100%;
     border-collapse: collapse;
@@ -173,10 +139,6 @@ thead tr:hover {
     background-color: light-dark(rgb(200, 200, 200), rgb(61, 61, 61));
 }
 
-.table-icon {
-    width: 20px;
-}
-
 button {
     border-radius: 8px;
     border: 1px solid transparent;
@@ -201,14 +163,61 @@ button:focus-visible {
     outline: 5px auto -webkit-focus-ring-color;
 }
 
+.table-icon {
+    width: 20px;
+}
+
 .add-button {
     margin: 10px;
     position: relative;
     left: 400px;
 }
 
+.make-model-add-button {
+    margin: 10px;
+    position: relative;
+}
+
+.edit-incident-button {
+    margin: 40px;
+}
+
 .date-picker {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.narrative-container {
+    display: flex; 
+    justify-content: center;
+}
+
+.narrative-container label {
+    text-align: left;
+}
+
+.table-container {
+    min-width: 1000px;
+    max-width: 1105px;
+    margin: auto;
+}
+
+.small-table-container {
+    min-width: 100px;
+    max-width: 300px;
+}
+
+.small-table-container table {
+    background-color: white;
+    width: 300px;
+}
+
+.small-table-container table thead {
+    display: none;
+}
+
+.small-table-container a {
+    text-decoration: none;
+    margin: 10px;
 }
 
 .incident-narrative {
@@ -242,11 +251,6 @@ button:focus-visible {
 .model-form {
     display: inline-block;
     align-content: left;
-}
-
-.make-model-add-button {
-    margin: 10px;
-    position: relative;
 }
 
 .view-icon:hover {
@@ -306,8 +310,4 @@ button:focus-visible {
 
 .popup-button {
     margin: 20px;
-}
-
-.edit-incident-button {
-    margin: 40px;
 }

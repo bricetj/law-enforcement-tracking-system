@@ -11,9 +11,9 @@ import { useNavigate } from 'react-router-dom';
 /**
  * Creates an HTML form that can be used for both editing and creating
  * Vehicles entries. 
- * @param {string} mode A mode, either 'create' or 'edit'.
  * @param {string} backendURL The URL used to host the application.
  * Is needed to initiate get requests.
+ * @param {string} mode A mode, either 'create' or 'edit'.
  * @param {object} vehicleToEdit A Vehicles object.
  * @returns An HTML form with various inputs for Vehicles data.
  */
@@ -57,7 +57,6 @@ function VehicleForm ({backendURL, mode, vehicleToEdit}) {
             navigate('/vehicles');
     };
 
-    
     // Sets form data to particular Vehicle if the form is in 'edit' mode.
     useEffect(() => {
         if(mode === 'edit' && vehicleToEdit) {
@@ -111,7 +110,7 @@ function VehicleForm ({backendURL, mode, vehicleToEdit}) {
                             <option value='' disabled>Select Color</option>
                             <option value='Black'>Black</option>
                             <option value='Blue'>Blue</option>
-                            <option value='Brown'>Brow</option>
+                            <option value='Brown'>Brown</option>
                             <option value='Gold'>Gold</option>
                             <option value='Green'>Green</option>
                             <option value='Gray'>Gray</option>

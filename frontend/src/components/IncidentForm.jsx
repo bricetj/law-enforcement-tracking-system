@@ -51,8 +51,44 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         setOtherOfficersTable(otherOfficers);
     }, [otherOfficers])
 
-    // Used to create a new affiliated officer and then wait for response to 
-    // update table.
+    // Calls the 'POST /incidents' endpoint in the REST API to create a new incident record.
+    const createIncident = async () => {
+        const response = await fetch(backendURL + '/incidents', 
+                {
+                    method: 'POST',
+                    headers: {'Content-type': 'application/json'},
+                    body: JSON.stringify(incident)
+                }
+        );
+        // User is alerted if incident is successfully created and then is
+        // redirected back to the /incidents page.
+        if(response.status === 201){
+                alert('The incident record was successfully created.');
+            } else {
+                alert('Failed to create incident record, status code = ' + response.status);
+            };
+        navigate('/incidents');
+    };
+
+     // Calls the 'PUT /incidents/:id' endpoint in the REST API to update a particular incident.
+    const updateIncident = useCallback(async () => {
+        const response = await fetch(backendURL + `/incidents/${incident['id']}`, {
+                    method: 'PUT',
+                    headers: {'Content-type': 'application/json'},
+                    body: JSON.stringify(incident)
+                }
+        );
+
+        // User is alerted if incident is successfully updated and redirects back to /incidents.
+        if(response.status === 200){
+            alert('Incident successfully updated!');
+        } else {
+            alert('Failed to edit incident record, status code = ' + response.status)
+        }
+        navigate('/incidents');
+    }, [otherOfficer, incident]);
+
+    // Used to create a new affiliated officer and then wait for response to update table.
     const createAffiliatedOfficer = useCallback(async () => {
         const response = await fetch(backendURL + '/affiliated-officers', 
             {
@@ -63,7 +99,7 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         );
         if(response.status === 201){
             alert('The affiliated officer was successfully added.');
-            // Calls the /affiliated-officers/:id route handler.
+            // Calls the /affiliated-officers/:id route handler to update table.
             try {
                 const response = await fetch(backendURL + `/affiliated-officers/${incident['id']}`);
                 const data = await response.json();
@@ -76,59 +112,7 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         };
     }, [otherOfficer, incident])
 
-    // Calls the 'POST /incidents' endpoint in the REST API.
-    const createIncident = async () => {
-        const response = await fetch(backendURL + '/incidents', 
-                {
-                    method: 'POST',
-                    headers: {'Content-type': 'application/json'},
-                    body: JSON.stringify(incident)
-                }
-        );
-        // User is alerted if incident is successfully created and then is
-        // redirected back to the incidents page.
-        if(response.status === 201){
-                alert('The incident record was successfully created.');
-            } else {
-                alert('Failed to create incident record, status code = ' + response.status);
-            };
-    };
-
-     // Calls the 'PUT /incidents/:id' endpoint in the REST API.
-    const updateIncident = useCallback(async () => {
-        const response = await fetch(backendURL + `/incidents/${incident['id']}`, {
-                    method: 'PUT',
-                    headers: {'Content-type': 'application/json'},
-                    body: JSON.stringify(incident)
-                }
-        );
-
-        // User is alerted if incident is successfully updated and redirects back to incidents.
-        if(response.status === 200){
-            alert('Incident successfully updated!');
-        } else {
-            alert('Failed to edit incident record, status code = ' + response.status)
-        }
-        navigate('/incidents');
-    }, [otherOfficer, incident]);
-
-    
-    // const loadAffiliatedOfficer = async () => {
-    //     try {
-    //         const response = await fetch(backendURL + `/affiliated-officers/${incident['id']}`);
-    //         const data = await response.json();
-    //         setOtherOfficersTable(data);
-    //     } catch (error) {
-    //         console.log(error);
-    //     };
-    // }
-
-    // useEffect( () => {
-    //     loadAffiliatedOfficer();
-    // }, []);
-
-
-     // Calls the 'PUT /incidents/:id' endpoint in the REST API.
+     // Calls the 'PUT /affiliated-officers/:id' endpoint to update an OfficerIncidents record.
     const updateAffiliatedOfficer = useCallback(async (oldOfficerID) => {
         const response = await fetch(backendURL + `/affiliated-officers/${oldOfficerID}/${incident.id}`, {
                     method: 'PUT',
@@ -136,9 +120,9 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
                     body: JSON.stringify({'officerID': otherOfficer, 'incidentID': incident.id, 'isCaseOfficer': 0})
                 }
         );
-
         // User is alerted if incident is successfully updated and redirects back to incidents.
         if(response.status === 200){
+            // Calls the /affiliated-officers/:id route handler to update table.
             alert('The affiliated officer was successfully updated!');
             try {
                 const response = await fetch(backendURL + `/affiliated-officers/${incident['id']}`);
@@ -152,6 +136,7 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         }
     }, [otherOfficer, incident]);
 
+    // Invoked when user selects edit icon on Affiliated Officers table.
     const onEdit = (officerID) => {
         setPopupValue(officerID);
         setPreviousOfficer(officerID);
@@ -159,9 +144,9 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         setPopupOpen(true);
     }
 
-    // Calls the Delete route handler.
+    // Calls the Delete route handler to delete OfficerIncidents records.
     const onDelete = async (id) => {
-        const response = await fetch(backendURL + `/incidents/officers/${id}/${incident['id']}`, { method: 'DELETE' });
+        const response = await fetch(backendURL + `/affiliated-officers/${id}/${incident['id']}`, { method: 'DELETE' });
         if (response.status === 204) {
             try {
                 const response = await fetch(backendURL + `/affiliated-officers/${incident['id']}`);
@@ -195,19 +180,14 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         editButtonHandler();
     }
 
-    // // Handles opening the popup window.
-    // const openPopupHandler = (f) => {
-    //     setPopupOpen(true);
-    // }
-
-      const addLinkHandler = () => {
+    // What happens when the "Add an Officer" link is selected to add an affiliated officer.
+    const addLinkHandler = () => {
         setPopupTitle('Add');
         setPopupValue();
         setPopupOpen(true);
     }
 
-
-    // Handles changes in selection from the Affiliated officers popup.
+    // Handles changes in selection from the affiliated officers popup.
     const onPopupChangeHandler = (f) => {
         const {value} = f.target;
         setPopupValue(value);
@@ -229,7 +209,6 @@ function IncidentForm ({backendURL, mode, incidentData, otherOfficers, editButto
         }
         setPopupOpen(false);
     }
-
 
     return (
         <div>

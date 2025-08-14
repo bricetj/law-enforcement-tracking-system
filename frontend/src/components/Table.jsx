@@ -19,7 +19,7 @@ import TableRow from './TableRow';
  * selected in the table.
  * @returns A React element that renders an HTML table.
  */
-function Table( {isIncidents, isAffiliatedOfficers, tableData, onEdit, onView, onDelete } ) {
+function Table( {isIncidents, tableData, onEdit, onView, onDelete } ) {
     // If array is empty.
     if (!tableData || tableData.length === 0) {
         return <p>No data to display.</p>
@@ -42,7 +42,6 @@ function Table( {isIncidents, isAffiliatedOfficers, tableData, onEdit, onView, o
                         <TableRow
                             key={index}
                             isIncidents={isIncidents}
-                            isAffiliatedOfficers={isAffiliatedOfficers}
                             rowObject={row}
                             onEdit={onEdit}
                             onView={onView}
