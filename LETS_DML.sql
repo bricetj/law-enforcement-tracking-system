@@ -10,78 +10,18 @@
 
 ******************************************************************************/
 
---
--- DROPDOWN SELECT QUERIES: Queries to be used when creating dropdowns
--- selectors throughout the application.
---
 
-
--- Dropdown for all vehicle makes
-SELECT vehicleMakeID, make
-FROM VehicleMakes;
-
--- Dropdown for all vehicle models
-SELECT vehicleModelID, model
-FROM VehicleModels;
-
--- Dropdown for all vehicles
-SELECT vehicleID, make, model
-FROM Vehicles
-	JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID
-	JOIN VehicleMakes ON VehicleModels.vehicleMakeID = VehicleMakes.vehicleMakeID;
-
--- Dropdown for all vehicles (status = active)
-SELECT vehicleID, make, model
-FROM Vehicles
-	JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID
-	JOIN VehicleMakes ON VehicleModels.vehicleMakeID = VehicleMakes.vehicleMakeID
-WHERE Vehicles.isActive = 1;
-
--- Dropdown for all incidents
-SELECT incidentID
-FROM Incidents;
-
--- Dropdown for all incidents (status = active)
-SELECT incidentID
-FROM Incidents
-WHERE Incidents.isActive = 1;
-
--- Dropdown for all officers associated with incident
-SELECT officerID, firstName, LastName
-FROM Officers
-	JOIN OfficerIncidents ON Officers.officerID = OfficerIncidents.officerID
-	JOIN Incidents ON OfficerIncidents.incidentID = Incidents.incidentID
-WHERE Officers.officerID = :officer_id_from_user_nput;
-
--- Dropdown for all officers
-SELECT officerID, firstName, LastName
-FROM Officers;
-
--- Dropdown for all officers (status = active)
-SELECT officerID, firstName, LastName
-FROM Officers
-WHERE Officers.isActive = 1;
-
--- Dropdown for all firearms
-SELECT firearmID, make, model
-FROM Firearms
-	JOIN FirearmModels ON Firearms.firearmModelID = FirearmModels.firearmModelID
-	JOIN FirearmMakes ON FirearmModels.firearmMakeID = FirearmMakes.firearmMakeID;
-
--- Dropdown for all firearm models
-SELECT firearmModelID, model
-FROM FirearmModels;
-
--- Dropdown for all firearm makes
-SELECT firearmMakeID, make
-FROM FirearmMakes;
+/**************************************
+ *
+ * SELECT QUERIES
+ *
+ **************************************/
 
 
 --
--- DISPLAY/UPDATE QUERIES (VEHICLES PAGE): Queries to display/filter data in table on
--- Vehicles page within the application. Also contains queries to update Vehicle info.
+-- SELECT QUERIES (VEHICLES PAGE): Queries to display data in table on Vehicles page
+-- within the application. Also used for dropdowns with vehicle-related info.
 --
-
 
 -- Populate Vehicles page (stored in a view).
 SELECT
@@ -114,34 +54,11 @@ JOIN VehicleModels ON Vehicles.vehicleModelID = VehicleModels.vehicleModelID
 LEFT JOIN Officers ON Officers.vehicleID = Vehicles.vehicleID
 WHERE Vehicles.vehicleID = :idInput;
 
--- Update vehicle model
-UPDATE Vehicles
-SET
-	vehicleModelID = :vehicle_model_id_from_dropdown_input
-WHERE vehicleID = :vehicle_id_from_dropdown_input;
-
--- Update vehicle color
-UPDATE Vehicles
-SET
-	color = :vehicle_color_from_dropdown_input
-WHERE vehicleID = :vehicle_id_from_dropdown_input;
-
--- Update vehicle license plate
-UPDATE Vehicles
-SET
-	licensePloate = :licensePlateInput
-WHERE vehicleID = :vehicle_id_from_dropdown_input;
-
--- Update vehicle active status
-UPDATE Vehicles
-SET
-	isActive = :isActiveCheckbox
-WHERE vehicleID = :vehicle_id_from_dropdown_input;
-
 
 --
--- DISPLAY/UPDATE QUERIES (INCIDENTS PAGE): Queries to display/filter data in table on
--- Incidents page within the application. Also contains queries to update Incident info.
+-- SELECT QUERIES (INCIDENTS PAGE): Queries to display data in table on
+-- Incidents page within the application. Also contains queries to select and
+-- view a single incident on the View Incident page.
 --
 
 -- Populate Incidents (stored as a view).
@@ -169,17 +86,10 @@ FROM Incidents
 	JOIN Officers ON Officers.officerID = OfficerIncidents.officerID
 WHERE Incidents.incidentID = :idInput AND OfficerIncidents.isCaseOfficer = 1;
 
--- Update incident information
-UPDATE Incidents
-SET date = dateNew,
-	description = descriptionNew,
-	isActive = isActiveNew
-WHERE incidentID = incidentIDInput;
-
 
 --
--- DISPLAY/UPDATE QUERIES (OFFICERS PAGE): Queries to display/filter data in table on
--- Officers page within the application. Also contains queries to update Officer info.
+-- SELECT QUERIES (OFFICERS PAGE): Queries to display data in table on Officers page
+-- within the application. Also used for Officer-related dropdowns.
 --
 
 -- Populate Officers page (stored as a view).
@@ -209,28 +119,9 @@ SELECT
 FROM Officers
 WHERE officerID = :idInput;
 
--- Update Officer information
-UPDATE Officers
-SET ssn = ssnNew,
-	firstName = firstNameNew,
-	middleName = middleNameNew,
-	lastName = lastNameNew,
-	dob = dobNew,
-	address = addressNew,
-	email = emailNew,
-	isActive = isActiveNew
-WHERE officerID = officerIDInput;
-
--- Update Officer vehicle
-UPDATE Officer
-SET
-	vehicleID = :vehicle_id_from_dropdown_Input
-WHERE officerID = :officer_id_from_dropdown_Input;
-
 
 --
--- DISPLAY/UPDATE QUERIES (OFFICER/INCIDENTS): Queries to select and update
--- OfficerIncidents data.
+-- SELECT QUERIES (OfficerIncidents): Queries to select OfficerIncidents data.
 --
 
 -- Gather associated officers per incident (that are not case officers)
@@ -242,16 +133,11 @@ FROM Officers
 	JOIN OfficerIncidents ON Officers.officerID = OfficerIncidents.officerID
 WHERE OfficerIncidents.incidentID = :idInput AND OfficerIncidents.isCaseOfficer = 0;
 
--- Update an OfficerIncidents record
-UPDATE OfficerIncidents
-SET officerID = officerIDNew,
-	incidentID = incidentIDNew,
-	isCaseOfficer = isCaseOfficerNew
-WHERE officerID  = officerIDInput AND incidentID = incidentIDInput;
+
 
 --
--- DISPLAY/UPDATE QUERIES (FIREARMS PAGE): Queries to display/filter data in table on
--- Firearms page within the application. Also contains queries to update Firearms info.
+-- SELECT QUERIES (FIREARMS PAGE): Queries to display data in table on Firearms page within
+-- the application, or select a Firearm by ID.
 --
 
 -- Populate Firearms page (stored as a view)
@@ -268,6 +154,7 @@ FROM Firearms
     LEFT JOIN Officers ON Officers.officerID = Firearms.officerID
 ORDER BY Firearms.firearmID ASC;
 
+
 -- Select a firearm by ID
 SELECT 
 	firearmID AS 'id',
@@ -278,16 +165,12 @@ SELECT
 FROM Firearms
 WHERE firearmID = :idInput;
 
--- Update firearm officer
-UPDATE Firearms
-SET
-	officerID = :officer_id_from_dropdown_Input
-WHERE firearmID = :firearm_id_from_dropdown_Input;
-
 
 --
--- DISPLAY QUERIES (VEHICLE MAKES PAGE): Queries to display data in table on
--- Vehicle Makes page.
+-- SELECT QUERIES (VEHICLE MAKES PAGE): Queries to display data in table on
+-- Vehicle Makes page (or for Vehicle Make dropdown) or select a specific Vehicle
+-- Make.
+-- 
 
 -- Display Vehicle Makes (stored as view)
 SELECT
@@ -305,8 +188,9 @@ FROM VehicleMakes
 WHERE vehicleMakeID = :idInput;
 
 --
--- DISPLAY QUERIES (VEHICLE MODELS PAGE): Queries to display data in table on
--- Vehicle Models page.
+-- SELECT QUERIES (VEHICLE MODELS PAGE): Queries to display data in table on
+-- Vehicle Models page or select a model by ID.
+--
 
 -- Display Vehicle Models (stored as view)
 SELECT
@@ -327,8 +211,9 @@ WHERE vehicleModelID = :idInput;
 
 
 --
--- DISPLAY QUERIES (FIREARM MAKES PAGE): Queries to display data in table on
--- Firearm Makes page.
+-- SELECT QUERIES (FIREARM MAKES PAGE): Queries to display data in table on
+-- Firearm Makes page or select a make by ID.
+--
 
 -- Display Firearm Makes (stored as view)
 SELECT
@@ -347,7 +232,8 @@ WHERE firearmMakeID = :idInput;
 
 --
 -- DISPLAY QUERIES (FIREARM MODELS PAGE): Queries to display data in table on
--- Firearm Models page.
+-- Firearm Models page or select a model by ID.
+-- 
 
 -- Display Firearm Models (stored as a view)
 SELECT
@@ -367,23 +253,14 @@ FROM FirearmModels
 WHERE firearmModelID = :idInput;
 
 
---
--- INSERTION QUERIES: For all entities within the application
---
 
--- Insert a new make into VehicleMakes.
-INSERT INTO VehicleMakes (make)
-VALUES (
-	:makeInput
-);
 
--- Insert a new model into VehicleModels that is affiliated with a preexisting
--- make.
-INSERT INTO VehicleModels (mode, vehicleMakeID)
-VALUES (
-	:modelInput,
-	:vehicle_make_id_from_dropdown_Input
-);
+/**************************************
+ *
+ * INSERTION QUERIES
+ *
+ **************************************/
+
 
 -- Insert a new Vehicle into Vehicles.
 INSERT INTO Vehicles (year, vehicleModelID, color, licensePlate, isActive)
@@ -395,8 +272,7 @@ VALUES (
 	:isActiveCheckbox
 );
 
--- Insert a new incident into Incidents. Will likely work in conjunction with queries
--- below to affiliate a case officer and any other involved officers.
+-- Insert a new incident into Incidents. 
 INSERT INTO Incidents (date, description, isActive)
 VALUES (
 	:dateInput,
@@ -425,31 +301,47 @@ VALUES (
 	:isActiveInput
 );
 
--- Insert a new Firearm.
-INSERT INTO Firearms (year, firearmModelID, isActive, officerID) VALUES (
-	:yearInput,
-	:firearm_model_id_from_dropdown_Input,
-	:isActiveCheckbox,
-	:officer_id_from_dropdown_Input
-);
 
--- Insert a new FirearmModel.
-INSERT INTO FirearmModels (model, firearmMakeID, caliber, type) VALUES (
-	:modelInput,
-	:firearm_make_id_from_dropdown_Input,
-	:caliberInput,
-	:typeInput
-);
+/**************************************
+ *
+ * UPDATE QUERIES
+ *
+ **************************************/
 
--- Insert a new FirearmMake.
-INSERT INTO FirearmMakes (make) VALUES (
-	:makeInput
-);
+-- Update Officer information
+UPDATE Officers
+SET ssn = ssnNew,
+	firstName = firstNameNew,
+	middleName = middleNameNew,
+	lastName = lastNameNew,
+	dob = dobNew,
+	address = addressNew,
+	email = emailNew,
+	isActive = isActiveNew
+WHERE officerID = officerIDInput;
 
 
---
--- DELETION QUERIES
---
+-- Update incident information
+UPDATE Incidents
+SET date = dateNew,
+	description = descriptionNew,
+	isActive = isActiveNew
+WHERE incidentID = incidentIDInput;
+
+
+-- Update an OfficerIncidents record
+UPDATE OfficerIncidents
+SET officerID = officerIDNew,
+	incidentID = incidentIDNew,
+	isCaseOfficer = isCaseOfficerNew
+WHERE officerID  = officerIDInput AND incidentID = incidentIDInput;
+
+
+/**************************************
+ *
+ * DELETION QUERIES
+ *
+ **************************************/
 
 -- Delete vehicle make
 DELETE FROM VehicleMakes

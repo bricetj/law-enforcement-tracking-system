@@ -216,8 +216,10 @@ button:focus-visible {
 }
 
 .small-table-container a {
+    padding: 10px;
     text-decoration: none;
     margin: 10px;
+    color: rgb(45, 45, 45);
 }
 
 .incident-narrative {
@@ -235,6 +237,18 @@ button:focus-visible {
 .column {
     float: left;
     width: 50%;
+}
+
+.column a {
+    color: rgb(46, 46, 46);
+}
+
+.column a:hover {
+    color: rgb(75, 75, 75);
+}
+
+.column a:visited {
+    color: rgb(46, 46, 46);
 }
 
 .row:after {

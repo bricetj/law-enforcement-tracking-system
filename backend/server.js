@@ -122,6 +122,21 @@ app.post('/affiliated-officers', async (req, res) => {
     }
 });
 
+
+// Route handler for running stored procedure to reset database.
+app.post('/reset-database', async (req, res) => {
+    try {
+        const resetSP = `CALL sp_load_lets();`;
+        const [reset] = await db.query(resetSP);
+        res.status(201).json(reset)
+
+    } catch (error) {
+        console.error("Error executing stored procedure:", error);
+        res.status(500).send("An error occurred while executing the database stored procedure.");
+    }
+});
+
+
 /*
  * GET Route Handlers
  */
@@ -405,20 +420,6 @@ app.put('/affiliated-officers/:id1/:id2', async (req, res) => {
 });
 
 
-// Route handler for running stored procedure to reset database.
-app.post('/reset-database', async (req, res) => {
-    try {
-        const resetSP = `CALL sp_load_lets();`;
-        const [reset] = await db.query(resetSP);
-        res.status(201).json(reset)
-
-    } catch (error) {
-        console.error("Error executing stored procedure:", error);
-        res.status(500).send("An error occurred while executing the database stored procedure.");
-    }
-});
-
-
 /*
  * DELETE Route Handlers
  */
@@ -560,7 +561,7 @@ app.delete('/affiliated-officers/:id1/:id2', async (req, res) => {
 });
 
 
-// Tell express what port to listen on 
+// Tells express what port to listen on. 
 app.listen(PORT, function () {
     console.log('Express started on http://classwork.engr.oregonstate.edu:' + PORT + '; press Ctrl-C to terminate.');
 });
