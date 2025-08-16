@@ -2,7 +2,7 @@
 
 A lightweight DBMS for a police department to track officers, vehicles, firearms, and incidents.
 
-
+Video Walkthrough: https://media.oregonstate.edu/media/t/1_2fea8ylb
 
 Code Citations:
 
